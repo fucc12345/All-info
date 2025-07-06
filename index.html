@@ -2,50 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RGB Color Picker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Material RGB Color Picker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
-      font-family: "Roboto", sans-serif;
+      font-family: 'Roboto', sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
+      padding: 2rem 1rem;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
       padding: 2rem;
-      background: #f3f4f6;
+      max-width: 460px;
+      width: 100%;
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      color: #111;
+      gap: 1.5rem;
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
       text-align: center;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 460px;
-      background: white;
-      border-radius: 20px;
-      padding: 1.8rem 1.5rem;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+      font-size: 1.8rem;
+      color: #333;
     }
 
     .slider-group {
-      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
-    .label-row {
+    .slider-label {
       display: flex;
       justify-content: space-between;
-      font-weight: bold;
-      margin-bottom: 4px;
+      font-weight: 500;
+      color: #555;
     }
 
     input[type="range"] {
@@ -60,187 +66,164 @@
 
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      appearance: none;
       height: 22px;
       width: 22px;
-      background: #ffffff;
-      border: 2px solid #999;
       border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      background: #fff;
+      border: 2px solid #666;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       transition: transform 0.2s ease;
     }
 
     input[type="range"]:active::-webkit-slider-thumb {
-      transform: scale(1.4);
-      border-color: #000;
+      transform: scale(1.3);
+      border-color: #222;
     }
 
-    .preview-box {
+    .preview {
       height: 140px;
       border-radius: 16px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-      margin-bottom: 1.2rem;
-      transition: background 0.3s;
       display: flex;
-      align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 1.1rem;
+      align-items: center;
       font-weight: bold;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      font-size: 1.1rem;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.1);
+      transition: background 0.3s;
     }
 
-    .output {
+    .values {
       text-align: center;
-      font-size: 1rem;
-      margin-bottom: 1rem;
+      line-height: 1.6;
     }
 
-    .copy-btn {
-      position: relative;
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 56px;
       height: 56px;
+      border-radius: 50%;
       background: #1976d2;
       color: white;
       border: none;
-      border-radius: 50%;
       cursor: pointer;
       overflow: hidden;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      position: relative;
     }
 
-    .copy-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
+    .material-symbols-outlined {
+      font-size: 24px;
       pointer-events: none;
     }
 
-    .copy-btn::after {
-      content: "";
+    .ripple::after {
+      content: '';
       position: absolute;
-      width: 100px;
-      height: 100px;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.5);
       border-radius: 50%;
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
+      animation: none;
     }
 
-    .copy-btn:active::after {
-      animation: ripple 0.5s ease-out;
+    .ripple:active::after {
+      top: var(--y, 50%);
+      left: var(--x, 50%);
+      width: 100px;
+      height: 100px;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+      animation: ripple 0.6s ease-out forwards;
     }
 
     @keyframes ripple {
-      0% {
-        transform: scale(0);
-        opacity: 0.6;
-      }
-      100% {
-        transform: scale(2.5);
+      to {
+        transform: translate(-50%, -50%) scale(2.5);
         opacity: 0;
       }
     }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 1rem;
-      }
-
-      .container {
-        padding: 1.3rem;
-      }
+    .btn-container {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
-  <h1>🎨 RGB Color Picker</h1>
-  <div class="container">
+  <div class="card">
+    <h1>🎨 RGB Color Picker</h1>
+
     <div class="slider-group">
-      <div class="label-row">
-        <label for="r">Red</label>
-        <span id="valR">0</span>
-      </div>
+      <div class="slider-label"><span>Red</span><span id="valR">0</span></div>
       <input type="range" id="r" min="0" max="255" value="0" />
     </div>
     <div class="slider-group">
-      <div class="label-row">
-        <label for="g">Green</label>
-        <span id="valG">0</span>
-      </div>
+      <div class="slider-label"><span>Green</span><span id="valG">0</span></div>
       <input type="range" id="g" min="0" max="255" value="0" />
     </div>
     <div class="slider-group">
-      <div class="label-row">
-        <label for="b">Blue</label>
-        <span id="valB">0</span>
-      </div>
+      <div class="slider-label"><span>Blue</span><span id="valB">0</span></div>
       <input type="range" id="b" min="0" max="255" value="0" />
     </div>
 
-    <div class="preview-box" id="colorBox">#000000</div>
+    <div class="preview" id="colorBox">#000000</div>
 
-    <div class="output">
+    <div class="values">
       <div><strong>RGB:</strong> <span id="rgbVal">rgb(0, 0, 0)</span></div>
       <div><strong>HEX:</strong> <span id="hexVal">#000000</span></div>
     </div>
 
-    <button class="copy-btn" id="copyBtn" aria-label="Copy Hex">
-      <svg viewBox="0 0 24 24">
-        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z"/>
-      </svg>
-    </button>
+    <div class="btn-container">
+      <button class="btn ripple" id="copyBtn" aria-label="Copy HEX">
+        <span class="material-symbols-outlined">content_copy</span>
+      </button>
+    </div>
   </div>
 
   <script>
     const sliders = {
-      r: document.getElementById('r'),
-      g: document.getElementById('g'),
-      b: document.getElementById('b'),
+      r: document.getElementById("r"),
+      g: document.getElementById("g"),
+      b: document.getElementById("b")
     };
-
     const labels = {
-      r: document.getElementById('valR'),
-      g: document.getElementById('valG'),
-      b: document.getElementById('valB'),
+      r: document.getElementById("valR"),
+      g: document.getElementById("valG"),
+      b: document.getElementById("valB")
     };
+    const colorBox = document.getElementById("colorBox");
+    const rgbVal = document.getElementById("rgbVal");
+    const hexVal = document.getElementById("hexVal");
+    const copyBtn = document.getElementById("copyBtn");
 
-    const colorBox = document.getElementById('colorBox');
-    const rgbText = document.getElementById('rgbVal');
-    const hexText = document.getElementById('hexVal');
-    const copyBtn = document.getElementById('copyBtn');
-
-    function toHex(value) {
-      return value.toString(16).padStart(2, '0');
+    function toHex(v) {
+      return v.toString(16).padStart(2, "0");
     }
 
-    function getContrastColor(r, g, b) {
+    function getContrast(r, g, b) {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      return brightness > 125 ? '#000' : '#fff';
+      return brightness > 125 ? "#000" : "#fff";
     }
 
-    function updateColor() {
+    function updateUI() {
       const r = +sliders.r.value;
       const g = +sliders.g.value;
       const b = +sliders.b.value;
-
       const rgb = `rgb(${r}, ${g}, ${b})`;
       const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+      colorBox.style.backgroundColor = rgb;
+      colorBox.textContent = hex;
+      colorBox.style.color = getContrast(r, g, b);
+      rgbVal.textContent = rgb;
+      hexVal.textContent = hex;
 
       labels.r.textContent = r;
       labels.g.textContent = g;
       labels.b.textContent = b;
-
-      rgbText.textContent = rgb;
-      hexText.textContent = hex;
-      colorBox.textContent = hex;
-      colorBox.style.backgroundColor = rgb;
-      colorBox.style.color = getContrastColor(r, g, b);
 
       setTrack(sliders.r, 'rgb(255,0,0)');
       setTrack(sliders.g, 'rgb(0,255,0)');
@@ -248,22 +231,32 @@
     }
 
     function setTrack(slider, color) {
-      const value = (slider.value / 255) * 100;
-      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${value}%, #ddd ${value}%)`;
+      const percent = (slider.value / 255) * 100;
+      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percent}%, #ddd ${percent}%)`;
     }
 
+    Object.values(sliders).forEach(slider => {
+      slider.addEventListener("input", updateUI);
+    });
+
     copyBtn.addEventListener("click", () => {
-      const hex = hexText.textContent;
-      navigator.clipboard.writeText(hex).then(() => {
-        alert(`Copied ${hex} to clipboard!`);
+      navigator.clipboard.writeText(hexVal.textContent).then(() => {
+        alert(`Copied ${hexVal.textContent} to clipboard!`);
       });
     });
 
-    Object.values(sliders).forEach(slider => {
-      slider.addEventListener('input', updateColor);
+    // Set ripple coordinates for custom center animation
+    ["mousedown", "touchstart"].forEach(evt => {
+      copyBtn.addEventListener(evt, e => {
+        const rect = copyBtn.getBoundingClientRect();
+        const x = (e.touches?.[0] || e).clientX - rect.left;
+        const y = (e.touches?.[0] || e).clientY - rect.top;
+        copyBtn.style.setProperty("--x", `${x}px`);
+        copyBtn.style.setProperty("--y", `${y}px`);
+      });
     });
 
-    updateColor();
+    updateUI();
   </script>
 </body>
 </html>
