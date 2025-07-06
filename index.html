@@ -2,46 +2,49 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <title>Advanced Color Picker</title>
+  <title>Ultimate Color & Gradient Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     :root {
       --bg-color: #f4f7f9;
       --card-bg-color: #ffffff;
-      --text-color: #333333;
-      --text-secondary-color: #555555;
-      --border-color: #e0e0e0;
-      --shadow-color: rgba(0, 0, 0, 0.1);
+      --text-color: #212529;
+      --text-secondary-color: #555c66;
+      --border-color: #e0e6ed;
+      --shadow-color: rgba(0, 0, 0, 0.08);
       --slider-track-color: #dcdfe6;
-      --slider-thumb-border: #666666;
+      --slider-thumb-border: #888;
       --primary-color: #4a76f5;
       --primary-text-color: #ffffff;
+      --success-color: #4caf50;
       --checkerboard-light: #f0f0f0;
       --checkerboard-dark: #dcdcdc;
+      --input-bg-color: #f8f9fa;
     }
 
     [data-theme="dark"] {
       --bg-color: #121212;
       --card-bg-color: #1e1e1e;
-      --text-color: #e0e0e0;
-      --text-secondary-color: #bbbbbb;
-      --border-color: #333333;
+      --text-color: #e8e8e8;
+      --text-secondary-color: #a0a0a0;
+      --border-color: #3a3a3a;
       --shadow-color: rgba(0, 0, 0, 0.4);
       --slider-track-color: #444444;
       --slider-thumb-border: #bbbbbb;
       --primary-color: #6d93ff;
-      --primary-text-color: #ffffff;
+      --success-color: #66bb6a;
       --checkerboard-light: #444444;
       --checkerboard-dark: #555555;
+      --input-bg-color: #2c2c2c;
     }
 
     * {
       box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
       margin: 0;
       padding: 0;
+      font-family: 'Roboto', sans-serif;
     }
 
     body {
@@ -54,12 +57,13 @@
 
     .container {
       max-width: 420px;
-      margin: 0 auto;
+      margin: 20px auto;
       background: var(--card-bg-color);
       border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 8px 24px var(--shadow-color);
+      box-shadow: 0 8px 32px var(--shadow-color);
       transition: background 0.3s, box-shadow 0.3s;
+      border: 1px solid var(--border-color);
     }
 
     .header {
@@ -68,62 +72,35 @@
       align-items: center;
       margin-bottom: 20px;
     }
-
     .header h2 {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-weight: 500;
       margin: 0;
+      font-size: 22px;
+    }
+    .theme-toggle-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary-color);
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    .theme-toggle-btn:hover {
+        background-color: var(--border-color);
+        color: var(--text-color);
     }
     
-    .theme-switch-wrapper {
-      display: flex;
-      align-items: center;
-    }
-    .theme-switch {
-      display: inline-block;
-      height: 24px;
-      position: relative;
-      width: 48px;
-    }
-    .theme-switch input {
-      display:none;
-    }
-    .theme-slider {
-      background-color: #ccc;
-      bottom: 0;
-      cursor: pointer;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    .theme-slider:before {
-      background-color: #fff;
-      bottom: 3px;
-      content: "";
-      height: 18px;
-      left: 3px;
-      position: absolute;
-      transition: .4s;
-      width: 18px;
-      border-radius: 50%;
-    }
-    input:checked + .theme-slider {
-      background-color: var(--primary-color);
-    }
-    input:checked + .theme-slider:before {
-      transform: translateX(24px);
-    }
-
     .preview {
       height: 120px;
       border-radius: 12px;
       margin-bottom: 24px;
-      transition: background 0.3s;
       border: 1px solid var(--border-color);
       background-image:
         linear-gradient(45deg, var(--checkerboard-light) 25%, transparent 25%),
@@ -137,194 +114,132 @@
       width: 100%;
       height: 100%;
       border-radius: 12px;
+      transition: background 0.2s;
     }
 
-    .slider-container {
-      margin-bottom: 20px;
+    .color-input-container {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+    #colorStringInput {
+        flex-grow: 1;
+        border: 1px solid var(--border-color);
+        background-color: var(--input-bg-color);
+        color: var(--text-color);
+        border-radius: 6px;
+        padding: 0 12px;
+        font-family: 'Roboto Mono', monospace;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #colorStringInput:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 25%, transparent);
     }
 
+    .slider-container { margin-bottom: 20px; }
     .label-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: var(--text-secondary-color);
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px; font-size: 14px; color: var(--text-secondary-color);
     }
-
-    .label-row .material-icons {
-      font-size: 20px;
-      vertical-align: middle;
-      margin-right: 4px;
-    }
-
+    .label-row .material-icons { font-size: 20px; vertical-align: middle; margin-right: 4px; }
     .slider {
-      width: 100%;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 8px;
-      background: var(--slider-track-color);
-      outline: none;
-      transition: background 0.3s;
-      position: relative;
+      width: 100%; -webkit-appearance: none; height: 6px; border-radius: 8px;
+      background: var(--slider-track-color); outline: none; transition: background 0.3s;
     }
     .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background: white;
-      border: 2px solid var(--slider-thumb-border);
-      border-radius: 50%;
-      box-shadow: 0 2px 6px var(--shadow-color);
-      cursor: pointer;
-      transition: transform 0.2s;
+      -webkit-appearance: none; appearance: none; width: 20px; height: 20px;
+      background: white; border: 2px solid var(--slider-thumb-border); border-radius: 50%;
+      box-shadow: 0 2px 6px var(--shadow-color); cursor: pointer; transition: transform 0.2s;
     }
     .slider::-moz-range-thumb { /* Firefox */
-      width: 20px;
-      height: 20px;
-      background: white;
-      border: 2px solid var(--slider-thumb-border);
-      border-radius: 50%;
-      box-shadow: 0 2px 6px var(--shadow-color);
-      cursor: pointer;
+      width: 20px; height: 20px; background: white; border: 2px solid var(--slider-thumb-border);
+      border-radius: 50%; box-shadow: 0 2px 6px var(--shadow-color); cursor: pointer;
     }
-    .slider::-webkit-slider-thumb:active {
-      transform: scale(1.2);
-    }
-    
-    .slider.red    { background: linear-gradient(to right, #f00 var(--value, 0%), var(--slider-track-color) 0%); }
-    .slider.green  { background: linear-gradient(to right, #0f0 var(--value, 0%), var(--slider-track-color) 0%); }
-    .slider.blue   { background: linear-gradient(to right, #00f var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+    .slider.red    { background: linear-gradient(to right, #f44336 var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider.green  { background: linear-gradient(to right, #4caf50 var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider.blue   { background: linear-gradient(to right, #2196f3 var(--value, 0%), var(--slider-track-color) 0%); }
     .slider.alpha  { background: linear-gradient(to right, var(--text-secondary-color) var(--value, 0%), var(--slider-track-color) 0%); }
 
-
     .output-grid {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: center;
-      margin-top: 24px;
-      font-family: 'monospace';
-      font-size: 15px;
+      display: grid; grid-template-columns: 1fr auto; gap: 8px;
+      align-items: center; margin-top: 16px; margin-bottom: 24px;
     }
     .output-code {
-      background: var(--bg-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      text-align: center;
+      background: var(--input-bg-color); padding: 8px 12px;
+      border-radius: 6px; border: 1px solid var(--border-color);
+      text-align: center; font-family: 'Roboto Mono', monospace; font-size: 15px;
     }
 
-    .copy-btn, .action-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--primary-color);
-      color: var(--primary-text-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      overflow: hidden;
-      position: relative;
-      user-select: none;
-      border: none;
-      -webkit-tap-highlight-color: transparent; /* Fix for mobile tap highlight */
-      transition: background-color 0.2s;
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--primary-color); color: var(--primary-text-color);
+      padding: 10px 16px; border-radius: 6px; font-weight: 500;
+      cursor: pointer; overflow: hidden; position: relative;
+      user-select: none; border: none; -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.2s, filter 0.2s;
     }
-    .copy-btn:hover, .action-btn:hover {
-        filter: brightness(1.1);
-    }
-    .copy-btn .material-icons {
-      font-size: 18px;
-    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn.copy-btn { padding: 8px 12px; }
+    .btn .material-icons { font-size: 20px; }
+    .btn.action-btn { flex: 1; font-size: 14px; }
+    .btn.action-btn .material-icons { margin-right: 8px; }
 
-    .actions-container {
-        display: flex;
-        gap: 12px;
-        margin-top: 24px;
+    details { margin-top: 24px; border: 1px solid var(--border-color); border-radius: 8px; }
+    summary {
+        list-style: none; padding: 12px 16px; font-weight: 500; cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center;
     }
-    .action-btn {
-        flex: 1;
-        font-size: 14px;
+    summary::-webkit-details-marker { display: none; }
+    summary:after {
+        content: 'expand_more'; font-family: 'Material Icons'; font-size: 24px;
+        transition: transform 0.2s;
     }
-    .action-btn .material-icons {
-      margin-right: 8px;
-    }
+    details[open] summary:after { transform: rotate(180deg); }
+    .details-content { padding: 0 16px 16px; }
 
-    .palette {
-        margin-top: 24px;
+    /* Gradient Section */
+    .gradient-preview { height: 80px; border-radius: 8px; margin-bottom: 16px; border: 1px solid var(--border-color); }
+    .gradient-stops { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; }
+    .gradient-stop {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 8px; cursor: pointer;
     }
-    .palette h3 {
-        font-weight: 500;
-        margin-bottom: 12px;
+    .gradient-stop .swatch {
+        width: 48px; height: 48px; border-radius: 8px;
+        border: 3px solid transparent; transition: border-color 0.2s;
     }
+    .gradient-stop.active .swatch { border-color: var(--primary-color); }
+
+    /* Palette Section */
     .palette-colors {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
         gap: 10px;
     }
     .palette-color {
-        height: 40px;
-        border-radius: 8px;
-        cursor: pointer;
-        position: relative;
-        border: 1px solid var(--border-color);
-        transition: transform 0.2s ease;
+        height: 40px; border-radius: 8px; cursor: pointer; position: relative;
+        border: 1px solid var(--border-color); transition: transform 0.2s ease;
     }
-    .palette-color:hover {
-        transform: scale(1.1);
-    }
+    .palette-color:hover { transform: scale(1.1); }
     .palette-color .remove-color {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        width: 18px;
-        height: 18px;
-        background: #ff4d4d;
-        color: white;
-        border-radius: 50%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        line-height: 18px;
-        font-family: monospace;
+        position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+        background: #ff4d4d; color: white; border-radius: 50%;
+        display: none; align-items: center; justify-content: center;
+        font-size: 14px; line-height: 18px; font-weight: bold;
     }
-    .palette-color:hover .remove-color {
-        display: flex;
-    }
-
-    /* Ripple Effect */
-    .ripple-effect {
-      position: absolute;
-      border-radius: 50%;
-      transform: scale(0);
-      animation: ripple 0.6s linear;
-      background: rgba(255, 255, 255, 0.7);
-      pointer-events: none;
-    }
-
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
+    .palette-color:hover .remove-color { display: flex; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <div class="header">
-      <h2><span class="material-icons">palette</span> Color Picker</h2>
-      <div class="theme-switch-wrapper">
-        <label class="theme-switch" for="themeToggle">
-          <input type="checkbox" id="themeToggle" />
-          <span class="theme-slider"></span>
-        </label>
-      </div>
+      <h2><span class="material-icons">palette</span> Color Tool</h2>
+      <button class="theme-toggle-btn" id="themeToggle" title="Toggle Theme">
+        <span class="material-icons">dark_mode</span>
+      </button>
     </div>
     
     <div class="preview">
@@ -333,281 +248,269 @@
 
     <!-- Sliders -->
     <div class="slider-container">
-      <div class="label-row">
-        <span><span class="material-icons" style="color:#f44336;">fiber_manual_record</span> Red</span>
-        <span class="value" id="rVal">0</span>
-      </div>
+      <div class="label-row"><span><span class="material-icons" style="color:#f44336;">fiber_manual_record</span> Red</span><span class="value" id="rVal">0</span></div>
       <input type="range" min="0" max="255" value="100" class="slider red" id="rSlider">
     </div>
-
     <div class="slider-container">
-      <div class="label-row">
-        <span><span class="material-icons" style="color:#4caf50;">fiber_manual_record</span> Green</span>
-        <span class="value" id="gVal">0</span>
-      </div>
+      <div class="label-row"><span><span class="material-icons" style="color:#4caf50;">fiber_manual_record</span> Green</span><span class="value" id="gVal">0</span></div>
       <input type="range" min="0" max="255" value="120" class="slider green" id="gSlider">
     </div>
-
     <div class="slider-container">
-      <div class="label-row">
-        <span><span class="material-icons" style="color:#2196f3;">fiber_manual_record</span> Blue</span>
-        <span class="value" id="bVal">0</span>
-      </div>
+      <div class="label-row"><span><span class="material-icons" style="color:#2196f3;">fiber_manual_record</span> Blue</span><span class="value" id="bVal">0</span></div>
       <input type="range" min="0" max="255" value="240" class="slider blue" id="bSlider">
     </div>
-
-     <div class="slider-container">
-      <div class="label-row">
-        <span><span class="material-icons">opacity</span> Alpha</span>
-        <span class="value" id="aVal">1.00</span>
-      </div>
+    <div class="slider-container">
+      <div class="label-row"><span><span class="material-icons">opacity</span> Alpha</span><span class="value" id="aVal">1.00</span></div>
       <input type="range" min="0" max="1" value="1" step="0.01" class="slider alpha" id="aSlider">
+    </div>
+
+    <!-- Color Input -->
+    <div class="color-input-container">
+        <input type="text" id="colorStringInput" placeholder="Enter color (hex, rgb, etc.)">
+        <button id="applyColorInput" class="btn">Apply</button>
     </div>
 
     <!-- Outputs -->
     <div class="output-grid" id="outputContainer">
         <div class="output-code" id="rgbaCode">rgba(0, 0, 0, 1)</div>
-        <button class="copy-btn" data-copy-target="#rgbaCode"><span class="material-icons">content_copy</span></button>
-        
+        <button class="btn copy-btn" data-copy-target="#rgbaCode" title="Copy RGBA"><span class="material-icons">content_copy</span></button>
         <div class="output-code" id="hexCode">#000000</div>
-        <button class="copy-btn" data-copy-target="#hexCode"><span class="material-icons">content_copy</span></button>
+        <button class="btn copy-btn" data-copy-target="#hexCode" title="Copy HEX"><span class="material-icons">content_copy</span></button>
     </div>
 
     <!-- Actions -->
-    <div class="actions-container">
-        <button class="action-btn" id="saveBtn"><span class="material-icons">add_to_photos</span> Save to Palette</button>
-        <button class="action-btn" id="exportBtn"><span class="material-icons">save_alt</span> Export Palette</button>
+    <div style="display: flex; gap: 12px;">
+        <button class="btn action-btn" id="saveBtn"><span class="material-icons">add_to_photos</span> Save to Palette</button>
+        <button class="btn action-btn" id="exportBtn"><span class="material-icons">save_alt</span> Export Palette</button>
     </div>
+
+    <!-- Gradient Generator -->
+    <details id="gradient-section">
+        <summary>Gradient Generator</summary>
+        <div class="details-content">
+            <div class="gradient-preview" id="gradientPreview"></div>
+            <div class="gradient-stops">
+                <div class="gradient-stop active" id="gradientStart">
+                    <div class="swatch" id="gradientStartSwatch"></div>
+                    <span>Start</span>
+                </div>
+                <div class="gradient-stop" id="gradientEnd">
+                    <div class="swatch" id="gradientEndSwatch"></div>
+                    <span>End</span>
+                </div>
+            </div>
+            <div class="output-grid">
+                <div class="output-code" id="gradientCssCode"></div>
+                <button class="btn copy-btn" data-copy-target="#gradientCssCode" title="Copy Gradient CSS"><span class="material-icons">content_copy</span></button>
+            </div>
+        </div>
+    </details>
 
     <!-- Palette -->
-    <div class="palette">
-        <h3>Palette</h3>
-        <div class="palette-colors" id="paletteContainer">
-            <!-- Saved colors will be injected here -->
+    <details id="palette-section">
+        <summary>My Palette</summary>
+        <div class="details-content">
+            <div class="palette-colors" id="paletteContainer"></div>
         </div>
-    </div>
+    </details>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const rSlider = document.getElementById("rSlider");
-      const gSlider = document.getElementById("gSlider");
-      const bSlider = document.getElementById("bSlider");
-      const aSlider = document.getElementById("aSlider");
-      
-      const rVal = document.getElementById("rVal");
-      const gVal = document.getElementById("gVal");
-      const bVal = document.getElementById("bVal");
-      const aVal = document.getElementById("aVal");
-      
-      const preview = document.getElementById("colorPreview");
-      const rgbaCode = document.getElementById("rgbaCode");
-      const hexCode = document.getElementById("hexCode");
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const elements = {
+        rSlider: document.getElementById("rSlider"), gSlider: document.getElementById("gSlider"), bSlider: document.getElementById("bSlider"), aSlider: document.getElementById("aSlider"),
+        rVal: document.getElementById("rVal"), gVal: document.getElementById("gVal"), bVal: document.getElementById("bVal"), aVal: document.getElementById("aVal"),
+        preview: document.getElementById("colorPreview"), rgbaCode: document.getElementById("rgbaCode"), hexCode: document.getElementById("hexCode"),
+        saveBtn: document.getElementById("saveBtn"), exportBtn: document.getElementById("exportBtn"), paletteContainer: document.getElementById("paletteContainer"),
+        themeToggle: document.getElementById("themeToggle"), themeIcon: document.querySelector('#themeToggle .material-icons'),
+        colorStringInput: document.getElementById('colorStringInput'), applyColorInput: document.getElementById('applyColorInput'),
+        gradientPreview: document.getElementById('gradientPreview'), gradientStart: document.getElementById('gradientStart'), gradientEnd: document.getElementById('gradientEnd'),
+        gradientStartSwatch: document.getElementById('gradientStartSwatch'), gradientEndSwatch: document.getElementById('gradientEndSwatch'), gradientCssCode: document.getElementById('gradientCssCode'),
+        outputContainer: document.getElementById('outputContainer')
+    };
 
-      const saveBtn = document.getElementById("saveBtn");
-      const exportBtn = document.getElementById("exportBtn");
-      const paletteContainer = document.getElementById("paletteContainer");
+    // State
+    let state = {
+        palette: [],
+        gradient: {
+            start: { r: 235, g: 68, b: 90, a: 1 },
+            end: { r: 28, g: 139, b: 226, a: 1 },
+            activeStop: 'start' // 'start' or 'end'
+        }
+    };
+    
+    // --- UTILS ---
+    const toHex = c => c.toString(16).padStart(2, '0');
+    const rgbToHex = (r, g, b) => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    const rgbaToHexa = (r, g, b, a) => rgbToHex(r, g, b) + toHex(Math.round(a * 255));
+    const toRgbaString = c => `rgba(${c.r}, ${c.g}, ${c.b}, ${c.a})`;
 
-      let savedPalette = [];
+    // --- COLOR LOGIC ---
+    function updateColor() {
+        const r = +elements.rSlider.value, g = +elements.gSlider.value, b = +elements.bSlider.value, a = +elements.aSlider.value;
 
-      function componentToHex(c) {
-        const hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
-      }
-
-      function rgbToHex(r, g, b) {
-        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-      }
-
-      function rgbaToHexa(r, g, b, a) {
-        const alphaHex = componentToHex(Math.round(a * 255));
-        return rgbToHex(r, g, b) + alphaHex;
-      }
-
-      function updateColor() {
-        const r = +rSlider.value;
-        const g = +gSlider.value;
-        const b = +bSlider.value;
-        const a = +aSlider.value;
-
-        rVal.textContent = r;
-        gVal.textContent = g;
-        bVal.textContent = b;
-        aVal.textContent = a.toFixed(2);
-
+        // Update UI text values
+        elements.rVal.textContent = r; elements.gVal.textContent = g; elements.bVal.textContent = b; elements.aVal.textContent = a.toFixed(2);
+        
+        // Update previews and code outputs
         const rgba = `rgba(${r}, ${g}, ${b}, ${a})`;
         const hex = rgbToHex(r, g, b);
-        const hexa = rgbaToHexa(r, g, b, a);
+        elements.preview.style.background = rgba;
+        elements.rgbaCode.textContent = rgba;
+        elements.hexCode.textContent = a < 1 ? rgbaToHexa(r, g, b, a) : hex;
 
-        preview.style.background = rgba;
-        rgbaCode.textContent = rgba;
+        // Update slider track fills
+        elements.rSlider.style.setProperty('--value', `${(r / 255) * 100}%`);
+        elements.gSlider.style.setProperty('--value', `${(g / 255) * 100}%`);
+        elements.bSlider.style.setProperty('--value', `${(b / 255) * 100}%`);
+        elements.aSlider.style.setProperty('--value', `${a * 100}%`);
 
-        // Display HEXA if alpha is not 1, otherwise display HEX
-        hexCode.textContent = a < 1 ? hexa : hex;
+        // Update active gradient stop
+        state.gradient[state.gradient.activeStop] = { r, g, b, a };
+        updateGradientUI();
+    }
+    
+    function setColor(colorObj) {
+        elements.rSlider.value = colorObj.r;
+        elements.gSlider.value = colorObj.g;
+        elements.bSlider.value = colorObj.b;
+        elements.aSlider.value = colorObj.a;
+        updateColor();
+    }
 
-        rSlider.style.setProperty('--value', `${(r / 255) * 100}%`);
-        gSlider.style.setProperty('--value', `${(g / 255) * 100}%`);
-        bSlider.style.setProperty('--value', `${(b / 255) * 100}%`);
-        aSlider.style.setProperty('--value', `${a * 100}%`);
-      }
-
-      function setColor(color) {
-          rSlider.value = color.r;
-          gSlider.value = color.g;
-          bSlider.value = color.b;
-          aSlider.value = color.a;
-          updateColor();
-      }
-
-      // --- Palette Logic ---
-      function renderPalette() {
-          paletteContainer.innerHTML = '';
-          savedPalette.forEach((color, index) => {
-              const colorSwatch = document.createElement('div');
-              colorSwatch.className = 'palette-color';
-              colorSwatch.style.background = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
-              colorSwatch.dataset.index = index;
-
-              const removeBtn = document.createElement('span');
-              removeBtn.className = 'remove-color';
-              removeBtn.innerHTML = '×';
-              removeBtn.title = 'Remove color';
-              
-              colorSwatch.appendChild(removeBtn);
-              paletteContainer.appendChild(colorSwatch);
-          });
-      }
-
-      function saveColor() {
-          const color = {
-              r: +rSlider.value,
-              g: +gSlider.value,
-              b: +bSlider.value,
-              a: +aSlider.value
-          };
-          savedPalette.push(color);
-          localStorage.setItem('colorPalette', JSON.stringify(savedPalette));
-          renderPalette();
-      }
-
-      function removeColor(index) {
-          savedPalette.splice(index, 1);
-          localStorage.setItem('colorPalette', JSON.stringify(savedPalette));
-          renderPalette();
-      }
-
-      function loadPalette() {
-          const storedPalette = localStorage.getItem('colorPalette');
-          if (storedPalette) {
-              savedPalette = JSON.parse(storedPalette);
-              renderPalette();
-          }
-      }
-      
-      function exportPalette() {
-          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedPalette, null, 2));
-          const downloadAnchorNode = document.createElement('a');
-          downloadAnchorNode.setAttribute("href", dataStr);
-          downloadAnchorNode.setAttribute("download", "color_palette.json");
-          document.body.appendChild(downloadAnchorNode);
-          downloadAnchorNode.click();
-          downloadAnchorNode.remove();
-      }
-
-      // --- Ripple Effect Logic ---
-      function createRipple(event) {
-        const button = event.currentTarget;
-        const circle = document.createElement("span");
-        const diameter = Math.max(button.clientWidth, button.clientHeight);
-        const radius = diameter / 2;
-
-        // This handles both mouse and touch events
-        const rect = button.getBoundingClientRect();
-        const rippleX = (event.clientX || event.touches[0].clientX) - rect.left;
-        const rippleY = (event.clientY || event.touches[0].clientY) - rect.top;
-
-        circle.style.width = circle.style.height = `${diameter}px`;
-        circle.style.left = `${rippleX - radius}px`;
-        circle.style.top = `${rippleY - radius}px`;
-        circle.classList.add("ripple-effect");
-
-        const ripple = button.getElementsByClassName("ripple-effect")[0];
-        if (ripple) {
-          ripple.remove();
-        }
-        button.appendChild(circle);
-      }
-      
-      // --- Theme Toggle Logic ---
-      const themeToggle = document.getElementById('themeToggle');
-      
-      function switchTheme(e) {
-        if (e.target.checked) {
-          document.documentElement.setAttribute('data-theme', 'dark');
-          localStorage.setItem('theme', 'dark');
+    function parseAndSetColor(colorString) {
+        // Use a temporary element to let the browser parse the color
+        const tempDiv = document.createElement('div');
+        tempDiv.style.color = colorString;
+        document.body.appendChild(tempDiv);
+        const computedColor = window.getComputedStyle(tempDiv).color;
+        document.body.removeChild(tempDiv);
+        
+        // Computed color is always rgb() or rgba()
+        const match = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (match) {
+            setColor({
+                r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3]),
+                a: match[4] !== undefined ? parseFloat(match[4]) : 1
+            });
+            elements.colorStringInput.value = '';
         } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-          localStorage.setItem('theme', 'light');
+            // Handle invalid color (e.g., visual feedback)
+            elements.colorStringInput.animate([
+                { transform: 'translateX(0)' }, { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
+            ], { duration: 300, easing: 'ease-in-out' });
         }
-      }
-      
-      const currentTheme = localStorage.getItem('theme');
-      if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        if (currentTheme === 'dark') {
-          themeToggle.checked = true;
-        }
-      }
+    }
 
-      // --- Event Listeners ---
-      [rSlider, gSlider, bSlider, aSlider].forEach(slider => {
-          slider.addEventListener("input", updateColor);
-      });
-      
-      document.getElementById('outputContainer').addEventListener('click', (e) => {
-        const copyBtn = e.target.closest('.copy-btn');
-        if (!copyBtn) return;
-        
-        const targetSelector = copyBtn.dataset.copyTarget;
-        const textToCopy = document.querySelector(targetSelector).textContent;
-        const icon = copyBtn.querySelector('.material-icons');
-        
+    // --- GRADIENT LOGIC ---
+    function updateGradientUI() {
+        const { start, end } = state.gradient;
+        const gradientCss = `linear-gradient(90deg, ${toRgbaString(start)}, ${toRgbaString(end)})`;
+        elements.gradientPreview.style.background = gradientCss;
+        elements.gradientStartSwatch.style.background = toRgbaString(start);
+        elements.gradientEndSwatch.style.background = toRgbaString(end);
+        elements.gradientCssCode.textContent = `background: ${gradientCss};`;
+    }
+
+    function setActiveGradientStop(stopName) {
+        state.gradient.activeStop = stopName;
+        elements.gradientStart.classList.toggle('active', stopName === 'start');
+        elements.gradientEnd.classList.toggle('active', stopName === 'end');
+        setColor(state.gradient[stopName]);
+    }
+    
+    // --- PALETTE LOGIC ---
+    const renderPalette = () => {
+        elements.paletteContainer.innerHTML = state.palette.map((color, index) => `
+            <div class="palette-color" data-index="${index}" title="${toRgbaString(color)}" style="background: ${toRgbaString(color)}">
+                <span class="remove-color" title="Remove color">×</span>
+            </div>
+        `).join('');
+    };
+    const saveToPalette = () => {
+        const { r, g, b, a } = { r: +elements.rSlider.value, g: +elements.gSlider.value, b: +elements.bSlider.value, a: +elements.aSlider.value };
+        state.palette.push({ r, g, b, a });
+        localStorage.setItem('colorPalette', JSON.stringify(state.palette));
+        renderPalette();
+        const originalText = elements.saveBtn.innerHTML;
+        elements.saveBtn.innerHTML = `<span class="material-icons">done</span> Saved!`;
+        setTimeout(() => { elements.saveBtn.innerHTML = originalText; }, 1500);
+    };
+    const loadPalette = () => {
+        const stored = localStorage.getItem('colorPalette');
+        if (stored) { state.palette = JSON.parse(stored); renderPalette(); }
+    };
+    const exportPalette = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.palette, null, 2));
+        const a = document.createElement('a');
+        a.href = dataStr; a.download = "color_palette.json"; a.click();
+    };
+
+    // --- THEME LOGIC ---
+    const switchTheme = (isDark) => {
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        elements.themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    };
+    const loadTheme = () => {
+        const savedTheme = localStorage.getItem('theme');
+        switchTheme(savedTheme === 'dark');
+    };
+
+    // --- EVENT LISTENERS ---
+    [elements.rSlider, elements.gSlider, elements.bSlider, elements.aSlider].forEach(s => s.addEventListener("input", updateColor));
+    
+    elements.applyColorInput.addEventListener('click', () => parseAndSetColor(elements.colorStringInput.value));
+    elements.colorStringInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') parseAndSetColor(e.target.value); });
+    
+    elements.saveBtn.addEventListener('click', saveToPalette);
+    elements.exportBtn.addEventListener('click', exportPalette);
+    elements.themeToggle.addEventListener('click', () => switchTheme(document.documentElement.dataset.theme === 'light'));
+
+    elements.outputContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        const textToCopy = document.querySelector(btn.dataset.copyTarget).textContent;
         navigator.clipboard.writeText(textToCopy).then(() => {
+            const icon = btn.querySelector('.material-icons');
             const originalIcon = icon.textContent;
+            const originalBg = btn.style.backgroundColor;
             icon.textContent = 'check';
-            copyBtn.style.background = '#4caf50';
-            setTimeout(() => {
-                icon.textContent = originalIcon;
-                copyBtn.style.background = '';
-            }, 1500);
+            btn.style.backgroundColor = 'var(--success-color)';
+            setTimeout(() => { icon.textContent = originalIcon; btn.style.backgroundColor = originalBg; }, 1500);
         });
-      });
-
-      paletteContainer.addEventListener('click', (e) => {
-          const swatch = e.target.closest('.palette-color');
-          if (!swatch) return;
-
-          const index = swatch.dataset.index;
-          if (e.target.classList.contains('remove-color')) {
-              removeColor(index);
-          } else {
-              setColor(savedPalette[index]);
-          }
-      });
-
-      saveBtn.addEventListener('click', saveColor);
-      exportBtn.addEventListener('click', exportPalette);
-      themeToggle.addEventListener('change', switchTheme);
-      
-      // Add ripple effect to all buttons
-      document.querySelectorAll('.copy-btn, .action-btn').forEach(btn => {
-        btn.addEventListener("click", createRipple);
-      });
-
-      // --- Initial Load ---
-      loadPalette();
-      updateColor();
     });
-  </script>
+
+    document.querySelector('#gradient-section .output-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        const textToCopy = document.querySelector(btn.dataset.copyTarget).textContent;
+        navigator.clipboard.writeText(textToCopy); // Simplified feedback for this one
+    });
+    
+    elements.paletteContainer.addEventListener('click', (e) => {
+        const swatch = e.target.closest('.palette-color');
+        if (!swatch) return;
+        const index = +swatch.dataset.index;
+        if (e.target.classList.contains('remove-color')) {
+            state.palette.splice(index, 1);
+            localStorage.setItem('colorPalette', JSON.stringify(state.palette));
+            renderPalette();
+        } else {
+            setColor(state.palette[index]);
+        }
+    });
+
+    elements.gradientStart.addEventListener('click', () => setActiveGradientStop('start'));
+    elements.gradientEnd.addEventListener('click', () => setActiveGradientStop('end'));
+
+    // --- INITIALIZATION ---
+    loadTheme();
+    loadPalette();
+    setActiveGradientStop('start'); // This also calls updateColor and initializes the app state
+});
+</script>
 </body>
 </html>
