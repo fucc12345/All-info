@@ -1,12 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <title>Modern RGB Color Picker</title>
+  <title>Advanced Color Picker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Google Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
+    :root {
+      --bg-color: #f4f7f9;
+      --card-bg-color: #ffffff;
+      --text-color: #333333;
+      --text-secondary-color: #555555;
+      --border-color: #e0e0e0;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --slider-track-color: #dcdfe6;
+      --slider-thumb-border: #666666;
+      --primary-color: #4a76f5;
+      --primary-text-color: #ffffff;
+      --checkerboard-light: #f0f0f0;
+      --checkerboard-dark: #dcdcdc;
+    }
+
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --card-bg-color: #1e1e1e;
+      --text-color: #e0e0e0;
+      --text-secondary-color: #bbbbbb;
+      --border-color: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+      --slider-track-color: #444444;
+      --slider-thumb-border: #bbbbbb;
+      --primary-color: #6d93ff;
+      --primary-text-color: #ffffff;
+      --checkerboard-light: #444444;
+      --checkerboard-dark: #555555;
+    }
+
     * {
       box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
@@ -15,24 +45,78 @@
     }
 
     body {
-      background: #f4f4f4;
-      color: #333;
+      background: var(--bg-color);
+      color: var(--text-color);
       padding: 20px;
+      transition: background 0.3s, color 0.3s;
+      font-size: 16px;
     }
 
     .container {
-      max-width: 400px;
+      max-width: 420px;
       margin: 0 auto;
-      background: white;
+      background: var(--card-bg-color);
       border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 24px var(--shadow-color);
+      transition: background 0.3s, box-shadow 0.3s;
     }
 
-    h2 {
-      text-align: center;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 20px;
+    }
+
+    .header h2 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-weight: 500;
+      margin: 0;
+    }
+    
+    .theme-switch-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    .theme-switch {
+      display: inline-block;
+      height: 24px;
+      position: relative;
+      width: 48px;
+    }
+    .theme-switch input {
+      display:none;
+    }
+    .theme-slider {
+      background-color: #ccc;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .theme-slider:before {
+      background-color: #fff;
+      bottom: 3px;
+      content: "";
+      height: 18px;
+      left: 3px;
+      position: absolute;
+      transition: .4s;
+      width: 18px;
+      border-radius: 50%;
+    }
+    input:checked + .theme-slider {
+      background-color: var(--primary-color);
+    }
+    input:checked + .theme-slider:before {
+      transform: translateX(24px);
     }
 
     .preview {
@@ -40,7 +124,19 @@
       border-radius: 12px;
       margin-bottom: 24px;
       transition: background 0.3s;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
+      background-image:
+        linear-gradient(45deg, var(--checkerboard-light) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--checkerboard-light) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--checkerboard-light) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--checkerboard-light) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .preview-color {
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
     }
 
     .slider-container {
@@ -51,12 +147,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: var(--text-secondary-color);
     }
 
     .label-row .material-icons {
       font-size: 20px;
       vertical-align: middle;
+      margin-right: 4px;
     }
 
     .slider {
@@ -64,69 +163,140 @@
       -webkit-appearance: none;
       height: 6px;
       border-radius: 8px;
-      background: #ccc;
+      background: var(--slider-track-color);
       outline: none;
       transition: background 0.3s;
       position: relative;
     }
-
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 20px;
       height: 20px;
       background: white;
-      border: 2px solid #666;
+      border: 2px solid var(--slider-thumb-border);
       border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px var(--shadow-color);
       cursor: pointer;
       transition: transform 0.2s;
     }
-
+    .slider::-moz-range-thumb { /* Firefox */
+      width: 20px;
+      height: 20px;
+      background: white;
+      border: 2px solid var(--slider-thumb-border);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px var(--shadow-color);
+      cursor: pointer;
+    }
     .slider::-webkit-slider-thumb:active {
       transform: scale(1.2);
     }
+    
+    .slider.red    { background: linear-gradient(to right, #f00 var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider.green  { background: linear-gradient(to right, #0f0 var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider.blue   { background: linear-gradient(to right, #00f var(--value, 0%), var(--slider-track-color) 0%); }
+    .slider.alpha  { background: linear-gradient(to right, var(--text-secondary-color) var(--value, 0%), var(--slider-track-color) 0%); }
 
-    .value {
-      font-weight: bold;
-      font-size: 14px;
-      color: #444;
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-top: 24px;
+      font-family: 'monospace';
+      font-size: 15px;
     }
-
-    /* Custom fill background */
-    .slider.red { background: linear-gradient(to right, red var(--value, 0%), #ccc 0%); }
-    .slider.green { background: linear-gradient(to right, green var(--value, 0%), #ccc 0%); }
-    .slider.blue { background: linear-gradient(to right, blue var(--value, 0%), #ccc 0%); }
-
-    .output {
+    .output-code {
+      background: var(--bg-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
       text-align: center;
-      font-weight: 500;
-      margin-top: 12px;
-      font-size: 16px;
     }
 
-    .ripple-btn {
+    .copy-btn, .action-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: #6200ea;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 100px;
-      font-size: 14px;
+      background: var(--primary-color);
+      color: var(--primary-text-color);
+      padding: 8px 12px;
+      border-radius: 6px;
       font-weight: 500;
-      margin: 14px auto 0;
-      width: 100%;
       cursor: pointer;
       overflow: hidden;
       position: relative;
       user-select: none;
+      border: none;
+      -webkit-tap-highlight-color: transparent; /* Fix for mobile tap highlight */
+      transition: background-color 0.2s;
+    }
+    .copy-btn:hover, .action-btn:hover {
+        filter: brightness(1.1);
+    }
+    .copy-btn .material-icons {
+      font-size: 18px;
     }
 
-    .ripple-btn .material-icons {
+    .actions-container {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+    .action-btn {
+        flex: 1;
+        font-size: 14px;
+    }
+    .action-btn .material-icons {
       margin-right: 8px;
     }
 
+    .palette {
+        margin-top: 24px;
+    }
+    .palette h3 {
+        font-weight: 500;
+        margin-bottom: 12px;
+    }
+    .palette-colors {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 10px;
+    }
+    .palette-color {
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative;
+        border: 1px solid var(--border-color);
+        transition: transform 0.2s ease;
+    }
+    .palette-color:hover {
+        transform: scale(1.1);
+    }
+    .palette-color .remove-color {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 18px;
+        height: 18px;
+        background: #ff4d4d;
+        color: white;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 18px;
+        font-family: monospace;
+    }
+    .palette-color:hover .remove-color {
+        display: flex;
+    }
+
+    /* Ripple Effect */
     .ripple-effect {
       position: absolute;
       border-radius: 50%;
@@ -145,91 +315,298 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2><span class="material-icons">palette</span> RGB Picker</h2>
-    <div class="preview" id="colorPreview"></div>
 
+  <div class="container">
+    <div class="header">
+      <h2><span class="material-icons">palette</span> Color Picker</h2>
+      <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="themeToggle">
+          <input type="checkbox" id="themeToggle" />
+          <span class="theme-slider"></span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="preview">
+      <div class="preview-color" id="colorPreview"></div>
+    </div>
+
+    <!-- Sliders -->
     <div class="slider-container">
       <div class="label-row">
-        <span><span class="material-icons" style="color:red;">circle</span> Red</span>
+        <span><span class="material-icons" style="color:#f44336;">fiber_manual_record</span> Red</span>
         <span class="value" id="rVal">0</span>
       </div>
-      <input type="range" min="0" max="255" value="0" class="slider red" id="rSlider">
+      <input type="range" min="0" max="255" value="100" class="slider red" id="rSlider">
     </div>
 
     <div class="slider-container">
       <div class="label-row">
-        <span><span class="material-icons" style="color:green;">circle</span> Green</span>
+        <span><span class="material-icons" style="color:#4caf50;">fiber_manual_record</span> Green</span>
         <span class="value" id="gVal">0</span>
       </div>
-      <input type="range" min="0" max="255" value="0" class="slider green" id="gSlider">
+      <input type="range" min="0" max="255" value="120" class="slider green" id="gSlider">
     </div>
 
     <div class="slider-container">
       <div class="label-row">
-        <span><span class="material-icons" style="color:blue;">circle</span> Blue</span>
+        <span><span class="material-icons" style="color:#2196f3;">fiber_manual_record</span> Blue</span>
         <span class="value" id="bVal">0</span>
       </div>
-      <input type="range" min="0" max="255" value="0" class="slider blue" id="bSlider">
+      <input type="range" min="0" max="255" value="240" class="slider blue" id="bSlider">
     </div>
 
-    <div class="output" id="rgbCode">RGB(0, 0, 0)</div>
+     <div class="slider-container">
+      <div class="label-row">
+        <span><span class="material-icons">opacity</span> Alpha</span>
+        <span class="value" id="aVal">1.00</span>
+      </div>
+      <input type="range" min="0" max="1" value="1" step="0.01" class="slider alpha" id="aSlider">
+    </div>
 
-    <div class="ripple-btn" id="copyBtn">
-      <span class="material-icons">content_copy</span> Copy RGB
+    <!-- Outputs -->
+    <div class="output-grid" id="outputContainer">
+        <div class="output-code" id="rgbaCode">rgba(0, 0, 0, 1)</div>
+        <button class="copy-btn" data-copy-target="#rgbaCode"><span class="material-icons">content_copy</span></button>
+        
+        <div class="output-code" id="hexCode">#000000</div>
+        <button class="copy-btn" data-copy-target="#hexCode"><span class="material-icons">content_copy</span></button>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-container">
+        <button class="action-btn" id="saveBtn"><span class="material-icons">add_to_photos</span> Save to Palette</button>
+        <button class="action-btn" id="exportBtn"><span class="material-icons">save_alt</span> Export Palette</button>
+    </div>
+
+    <!-- Palette -->
+    <div class="palette">
+        <h3>Palette</h3>
+        <div class="palette-colors" id="paletteContainer">
+            <!-- Saved colors will be injected here -->
+        </div>
     </div>
   </div>
 
   <script>
-    const rSlider = document.getElementById("rSlider");
-    const gSlider = document.getElementById("gSlider");
-    const bSlider = document.getElementById("bSlider");
-    const rVal = document.getElementById("rVal");
-    const gVal = document.getElementById("gVal");
-    const bVal = document.getElementById("bVal");
-    const preview = document.getElementById("colorPreview");
-    const rgbCode = document.getElementById("rgbCode");
+    document.addEventListener('DOMContentLoaded', () => {
+      const rSlider = document.getElementById("rSlider");
+      const gSlider = document.getElementById("gSlider");
+      const bSlider = document.getElementById("bSlider");
+      const aSlider = document.getElementById("aSlider");
+      
+      const rVal = document.getElementById("rVal");
+      const gVal = document.getElementById("gVal");
+      const bVal = document.getElementById("bVal");
+      const aVal = document.getElementById("aVal");
+      
+      const preview = document.getElementById("colorPreview");
+      const rgbaCode = document.getElementById("rgbaCode");
+      const hexCode = document.getElementById("hexCode");
 
-    function updateColor() {
-      const r = +rSlider.value;
-      const g = +gSlider.value;
-      const b = +bSlider.value;
+      const saveBtn = document.getElementById("saveBtn");
+      const exportBtn = document.getElementById("exportBtn");
+      const paletteContainer = document.getElementById("paletteContainer");
 
-      rVal.textContent = r;
-      gVal.textContent = g;
-      bVal.textContent = b;
+      let savedPalette = [];
 
-      const rgb = `rgb(${r}, ${g}, ${b})`;
-      preview.style.background = rgb;
-      rgbCode.textContent = rgb;
+      function componentToHex(c) {
+        const hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+      }
 
-      rSlider.style.setProperty('--value', `${r / 255 * 100}%`);
-      gSlider.style.setProperty('--value', `${g / 255 * 100}%`);
-      bSlider.style.setProperty('--value', `${b / 255 * 100}%`);
-    }
+      function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+      }
 
-    rSlider.addEventListener("input", updateColor);
-    gSlider.addEventListener("input", updateColor);
-    bSlider.addEventListener("input", updateColor);
-    updateColor();
+      function rgbaToHexa(r, g, b, a) {
+        const alphaHex = componentToHex(Math.round(a * 255));
+        return rgbToHex(r, g, b) + alphaHex;
+      }
 
-    // Ripple Effect
-    document.querySelectorAll('.ripple-btn').forEach(btn => {
-      btn.addEventListener('click', function (e) {
-        const ripple = document.createElement('span');
-        ripple.className = 'ripple-effect';
-        ripple.style.left = `${e.offsetX}px`;
-        ripple.style.top = `${e.offsetY}px`;
-        this.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
+      function updateColor() {
+        const r = +rSlider.value;
+        const g = +gSlider.value;
+        const b = +bSlider.value;
+        const a = +aSlider.value;
+
+        rVal.textContent = r;
+        gVal.textContent = g;
+        bVal.textContent = b;
+        aVal.textContent = a.toFixed(2);
+
+        const rgba = `rgba(${r}, ${g}, ${b}, ${a})`;
+        const hex = rgbToHex(r, g, b);
+        const hexa = rgbaToHexa(r, g, b, a);
+
+        preview.style.background = rgba;
+        rgbaCode.textContent = rgba;
+
+        // Display HEXA if alpha is not 1, otherwise display HEX
+        hexCode.textContent = a < 1 ? hexa : hex;
+
+        rSlider.style.setProperty('--value', `${(r / 255) * 100}%`);
+        gSlider.style.setProperty('--value', `${(g / 255) * 100}%`);
+        bSlider.style.setProperty('--value', `${(b / 255) * 100}%`);
+        aSlider.style.setProperty('--value', `${a * 100}%`);
+      }
+
+      function setColor(color) {
+          rSlider.value = color.r;
+          gSlider.value = color.g;
+          bSlider.value = color.b;
+          aSlider.value = color.a;
+          updateColor();
+      }
+
+      // --- Palette Logic ---
+      function renderPalette() {
+          paletteContainer.innerHTML = '';
+          savedPalette.forEach((color, index) => {
+              const colorSwatch = document.createElement('div');
+              colorSwatch.className = 'palette-color';
+              colorSwatch.style.background = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+              colorSwatch.dataset.index = index;
+
+              const removeBtn = document.createElement('span');
+              removeBtn.className = 'remove-color';
+              removeBtn.innerHTML = '×';
+              removeBtn.title = 'Remove color';
+              
+              colorSwatch.appendChild(removeBtn);
+              paletteContainer.appendChild(colorSwatch);
+          });
+      }
+
+      function saveColor() {
+          const color = {
+              r: +rSlider.value,
+              g: +gSlider.value,
+              b: +bSlider.value,
+              a: +aSlider.value
+          };
+          savedPalette.push(color);
+          localStorage.setItem('colorPalette', JSON.stringify(savedPalette));
+          renderPalette();
+      }
+
+      function removeColor(index) {
+          savedPalette.splice(index, 1);
+          localStorage.setItem('colorPalette', JSON.stringify(savedPalette));
+          renderPalette();
+      }
+
+      function loadPalette() {
+          const storedPalette = localStorage.getItem('colorPalette');
+          if (storedPalette) {
+              savedPalette = JSON.parse(storedPalette);
+              renderPalette();
+          }
+      }
+      
+      function exportPalette() {
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(savedPalette, null, 2));
+          const downloadAnchorNode = document.createElement('a');
+          downloadAnchorNode.setAttribute("href", dataStr);
+          downloadAnchorNode.setAttribute("download", "color_palette.json");
+          document.body.appendChild(downloadAnchorNode);
+          downloadAnchorNode.click();
+          downloadAnchorNode.remove();
+      }
+
+      // --- Ripple Effect Logic ---
+      function createRipple(event) {
+        const button = event.currentTarget;
+        const circle = document.createElement("span");
+        const diameter = Math.max(button.clientWidth, button.clientHeight);
+        const radius = diameter / 2;
+
+        // This handles both mouse and touch events
+        const rect = button.getBoundingClientRect();
+        const rippleX = (event.clientX || event.touches[0].clientX) - rect.left;
+        const rippleY = (event.clientY || event.touches[0].clientY) - rect.top;
+
+        circle.style.width = circle.style.height = `${diameter}px`;
+        circle.style.left = `${rippleX - radius}px`;
+        circle.style.top = `${rippleY - radius}px`;
+        circle.classList.add("ripple-effect");
+
+        const ripple = button.getElementsByClassName("ripple-effect")[0];
+        if (ripple) {
+          ripple.remove();
+        }
+        button.appendChild(circle);
+      }
+      
+      // --- Theme Toggle Logic ---
+      const themeToggle = document.getElementById('themeToggle');
+      
+      function switchTheme(e) {
+        if (e.target.checked) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          localStorage.setItem('theme', 'light');
+        }
+      }
+      
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        if (currentTheme === 'dark') {
+          themeToggle.checked = true;
+        }
+      }
+
+      // --- Event Listeners ---
+      [rSlider, gSlider, bSlider, aSlider].forEach(slider => {
+          slider.addEventListener("input", updateColor);
       });
-    });
-
-    // Copy to Clipboard
-    document.getElementById("copyBtn").addEventListener("click", () => {
-      navigator.clipboard.writeText(rgbCode.textContent).then(() => {
-        alert("Copied: " + rgbCode.textContent);
+      
+      document.getElementById('outputContainer').addEventListener('click', (e) => {
+        const copyBtn = e.target.closest('.copy-btn');
+        if (!copyBtn) return;
+        
+        const targetSelector = copyBtn.dataset.copyTarget;
+        const textToCopy = document.querySelector(targetSelector).textContent;
+        const icon = copyBtn.querySelector('.material-icons');
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalIcon = icon.textContent;
+            icon.textContent = 'check';
+            copyBtn.style.background = '#4caf50';
+            setTimeout(() => {
+                icon.textContent = originalIcon;
+                copyBtn.style.background = '';
+            }, 1500);
+        });
       });
+
+      paletteContainer.addEventListener('click', (e) => {
+          const swatch = e.target.closest('.palette-color');
+          if (!swatch) return;
+
+          const index = swatch.dataset.index;
+          if (e.target.classList.contains('remove-color')) {
+              removeColor(index);
+          } else {
+              setColor(savedPalette[index]);
+          }
+      });
+
+      saveBtn.addEventListener('click', saveColor);
+      exportBtn.addEventListener('click', exportPalette);
+      themeToggle.addEventListener('change', switchTheme);
+      
+      // Add ripple effect to all buttons
+      document.querySelectorAll('.copy-btn, .action-btn').forEach(btn => {
+        btn.addEventListener("click", createRipple);
+      });
+
+      // --- Initial Load ---
+      loadPalette();
+      updateColor();
     });
   </script>
 </body>
