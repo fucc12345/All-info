@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Material RGB Color Picker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Material RGBA Color Picker</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       font-family: 'Roboto', sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
-
     body {
       margin: 0;
       padding: 2rem 1rem;
@@ -22,11 +21,10 @@
       align-items: flex-start;
       min-height: 100vh;
     }
-
     .card {
       background: white;
       padding: 2rem;
-      max-width: 460px;
+      max-width: 480px;
       width: 100%;
       border-radius: 18px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -34,27 +32,23 @@
       flex-direction: column;
       gap: 1.5rem;
     }
-
     h1 {
       text-align: center;
       font-size: 1.8rem;
       color: #333;
     }
-
     .slider-group {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
     }
-
     .slider-label {
       display: flex;
       justify-content: space-between;
       font-weight: 500;
       color: #555;
     }
-
-    input[type="range"] {
+    input[type=range] {
       -webkit-appearance: none;
       width: 100%;
       height: 6px;
@@ -63,8 +57,7 @@
       outline: none;
       transition: background 0.3s;
     }
-
-    input[type="range"]::-webkit-slider-thumb {
+    input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       height: 22px;
       width: 22px;
@@ -74,189 +67,253 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       transition: transform 0.2s ease;
     }
-
-    input[type="range"]:active::-webkit-slider-thumb {
+    input[type=range]:active::-webkit-slider-thumb {
       transform: scale(1.3);
       border-color: #222;
     }
-
     .preview {
-      height: 140px;
+      height: 120px;
       border-radius: 16px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-weight: bold;
-      font-size: 1.1rem;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 1rem;
+      text-align: center;
+      padding: 0 1rem;
       transition: background 0.3s;
     }
-
     .values {
       text-align: center;
       line-height: 1.6;
     }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
+    .btn-group {
+      display: flex;
+      gap: 1rem;
       justify-content: center;
-      width: 56px;
-      height: 56px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      position: relative;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       background: #1976d2;
-      color: white;
       border: none;
+      color: white;
       cursor: pointer;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      position: relative;
     }
-
-    .material-symbols-outlined {
+    .btn .material-symbols-outlined {
       font-size: 24px;
-      pointer-events: none;
     }
-
-    .ripple::after {
+    .btn::after {
       content: '';
       position: absolute;
-      background: rgba(255, 255, 255, 0.5);
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.4);
       border-radius: 50%;
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
-      animation: none;
     }
-
-    .ripple:active::after {
-      top: var(--y, 50%);
-      left: var(--x, 50%);
-      width: 100px;
-      height: 100px;
+    .btn:active::after {
+      animation: ripple 0.5s ease-out;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%) scale(0);
       opacity: 1;
-      animation: ripple 0.6s ease-out forwards;
     }
-
     @keyframes ripple {
       to {
         transform: translate(-50%, -50%) scale(2.5);
         opacity: 0;
       }
     }
-
-    .btn-container {
+    .palette {
       display: flex;
-      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>🎨 RGB Color Picker</h1>
+    <h1>🎨 RGBA Color Picker</h1>
 
     <div class="slider-group">
       <div class="slider-label"><span>Red</span><span id="valR">0</span></div>
-      <input type="range" id="r" min="0" max="255" value="0" />
+      <input type="range" id="r" min="0" max="255" value="0">
     </div>
     <div class="slider-group">
       <div class="slider-label"><span>Green</span><span id="valG">0</span></div>
-      <input type="range" id="g" min="0" max="255" value="0" />
+      <input type="range" id="g" min="0" max="255" value="0">
     </div>
     <div class="slider-group">
       <div class="slider-label"><span>Blue</span><span id="valB">0</span></div>
-      <input type="range" id="b" min="0" max="255" value="0" />
+      <input type="range" id="b" min="0" max="255" value="0">
+    </div>
+    <div class="slider-group">
+      <div class="slider-label"><span>Alpha</span><span id="valA">1.00</span></div>
+      <input type="range" id="a" min="0" max="1" value="1" step="0.01">
     </div>
 
     <div class="preview" id="colorBox">#000000</div>
 
     <div class="values">
-      <div><strong>RGB:</strong> <span id="rgbVal">rgb(0, 0, 0)</span></div>
+      <div><strong>RGBA:</strong> <span id="rgbaVal">rgba(0, 0, 0, 1)</span></div>
       <div><strong>HEX:</strong> <span id="hexVal">#000000</span></div>
+      <div><strong>Color Name:</strong> <span id="nameVal">Unknown</span></div>
     </div>
 
-    <div class="btn-container">
-      <button class="btn ripple" id="copyBtn" aria-label="Copy HEX">
-        <span class="material-symbols-outlined">content_copy</span>
-      </button>
+    <div class="btn-group">
+      <button class="btn" id="copyBtn"><span class="material-symbols-outlined">content_copy</span></button>
+      <button class="btn" id="saveBtn"><span class="material-symbols-outlined">palette</span></button>
+      <button class="btn" id="exportBtn"><span class="material-symbols-outlined">download</span></button>
     </div>
+
+    <div class="palette" id="palette"></div>
   </div>
 
   <script>
     const sliders = {
-      r: document.getElementById("r"),
-      g: document.getElementById("g"),
-      b: document.getElementById("b")
+      r: document.getElementById('r'),
+      g: document.getElementById('g'),
+      b: document.getElementById('b'),
+      a: document.getElementById('a')
     };
     const labels = {
-      r: document.getElementById("valR"),
-      g: document.getElementById("valG"),
-      b: document.getElementById("valB")
+      r: document.getElementById('valR'),
+      g: document.getElementById('valG'),
+      b: document.getElementById('valB'),
+      a: document.getElementById('valA')
     };
-    const colorBox = document.getElementById("colorBox");
-    const rgbVal = document.getElementById("rgbVal");
-    const hexVal = document.getElementById("hexVal");
-    const copyBtn = document.getElementById("copyBtn");
+    const colorBox = document.getElementById('colorBox');
+    const rgbaVal = document.getElementById('rgbaVal');
+    const hexVal = document.getElementById('hexVal');
+    const nameVal = document.getElementById('nameVal');
+    const palette = document.getElementById('palette');
+    const copyBtn = document.getElementById('copyBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    const colorNames = {
+      "#ff0000": "Red",
+      "#00ff00": "Lime",
+      "#0000ff": "Blue",
+      "#ffff00": "Yellow",
+      "#00ffff": "Cyan",
+      "#ff00ff": "Magenta",
+      "#ffffff": "White",
+      "#000000": "Black",
+      "#808080": "Gray",
+      "#c0c0c0": "Silver",
+    };
 
     function toHex(v) {
-      return v.toString(16).padStart(2, "0");
+      return v.toString(16).padStart(2, '0');
     }
 
     function getContrast(r, g, b) {
       const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      return brightness > 125 ? "#000" : "#fff";
+      return brightness > 125 ? '#000' : '#fff';
     }
 
-    function updateUI() {
+    function getColorName(hex) {
+      return colorNames[hex.toLowerCase()] || 'Unknown';
+    }
+
+    function updateColor() {
       const r = +sliders.r.value;
       const g = +sliders.g.value;
       const b = +sliders.b.value;
-      const rgb = `rgb(${r}, ${g}, ${b})`;
-      const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-
-      colorBox.style.backgroundColor = rgb;
-      colorBox.textContent = hex;
-      colorBox.style.color = getContrast(r, g, b);
-      rgbVal.textContent = rgb;
-      hexVal.textContent = hex;
+      const a = +sliders.a.value;
 
       labels.r.textContent = r;
       labels.g.textContent = g;
       labels.b.textContent = b;
+      labels.a.textContent = a.toFixed(2);
 
-      setTrack(sliders.r, 'rgb(255,0,0)');
-      setTrack(sliders.g, 'rgb(0,255,0)');
-      setTrack(sliders.b, 'rgb(0,0,255)');
+      const rgba = `rgba(${r}, ${g}, ${b}, ${a})`;
+      const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+      rgbaVal.textContent = rgba;
+      hexVal.textContent = hex;
+      nameVal.textContent = getColorName(hex);
+
+      colorBox.style.backgroundColor = rgba;
+      colorBox.textContent = hex + (a < 1 ? ` / ${Math.round(a * 100)}%` : '');
+      colorBox.style.color = getContrast(r, g, b);
     }
 
-    function setTrack(slider, color) {
-      const percent = (slider.value / 255) * 100;
-      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percent}%, #ddd ${percent}%)`;
+    function saveColor() {
+      const color = rgbaVal.textContent;
+      let saved = JSON.parse(localStorage.getItem('savedColors') || '[]');
+      if (!saved.includes(color)) {
+        saved.push(color);
+        localStorage.setItem('savedColors', JSON.stringify(saved));
+        renderPalette();
+      }
+    }
+
+    function renderPalette() {
+      const saved = JSON.parse(localStorage.getItem('savedColors') || '[]');
+      palette.innerHTML = '';
+      saved.forEach(c => {
+        const swatch = document.createElement('div');
+        swatch.className = 'swatch';
+        swatch.style.background = c;
+        swatch.title = c;
+        swatch.onclick = () => {
+          const rgba = c.match(/\\d+\\.?\\d*/g);
+          sliders.r.value = rgba[0];
+          sliders.g.value = rgba[1];
+          sliders.b.value = rgba[2];
+          sliders.a.value = rgba[3];
+          updateColor();
+        };
+        palette.appendChild(swatch);
+      });
+    }
+
+    function exportJSON() {
+      const saved = localStorage.getItem('savedColors') || '[]';
+      const blob = new Blob([saved], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'saved-colors.json';
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     Object.values(sliders).forEach(slider => {
-      slider.addEventListener("input", updateUI);
+      slider.addEventListener('input', updateColor);
     });
 
-    copyBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(hexVal.textContent).then(() => {
-        alert(`Copied ${hexVal.textContent} to clipboard!`);
-      });
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(hexVal.textContent);
+      alert('HEX Copied!');
     });
 
-    // Set ripple coordinates for custom center animation
-    ["mousedown", "touchstart"].forEach(evt => {
-      copyBtn.addEventListener(evt, e => {
-        const rect = copyBtn.getBoundingClientRect();
-        const x = (e.touches?.[0] || e).clientX - rect.left;
-        const y = (e.touches?.[0] || e).clientY - rect.top;
-        copyBtn.style.setProperty("--x", `${x}px`);
-        copyBtn.style.setProperty("--y", `${y}px`);
-      });
-    });
+    saveBtn.addEventListener('click', saveColor);
+    exportBtn.addEventListener('click', exportJSON);
 
-    updateUI();
+    updateColor();
+    renderPalette();
   </script>
 </body>
 </html>
