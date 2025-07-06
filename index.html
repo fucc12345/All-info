@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RGB Color Picker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
   <style>
     * {
       box-sizing: border-box;
@@ -25,6 +25,7 @@
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
+      text-align: center;
     }
 
     .container {
@@ -97,22 +98,26 @@
     }
 
     .copy-btn {
-      padding: 12px 20px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
       background: #1976d2;
       color: white;
       border: none;
-      border-radius: 25px;
-      font-weight: bold;
+      border-radius: 50%;
       cursor: pointer;
-      position: relative;
       overflow: hidden;
-      transition: background 0.3s, transform 0.2s;
-      display: inline-block;
-      width: 100%;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
 
-    .copy-btn:active {
-      transform: scale(0.98);
+    .copy-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+      pointer-events: none;
     }
 
     .copy-btn::after {
@@ -125,23 +130,18 @@
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
-      animation: none;
-    }
-
-    .copy-btn:focus:not(:active)::after {
-      animation: none;
     }
 
     .copy-btn:active::after {
-      top: var(--y);
-      left: var(--x);
-      transform: scale(0);
-      opacity: 1;
       animation: ripple 0.5s ease-out;
     }
 
     @keyframes ripple {
-      to {
+      0% {
+        transform: scale(0);
+        opacity: 0.6;
+      }
+      100% {
         transform: scale(2.5);
         opacity: 0;
       }
@@ -151,6 +151,7 @@
       body {
         padding: 1rem;
       }
+
       .container {
         padding: 1.3rem;
       }
@@ -189,7 +190,11 @@
       <div><strong>HEX:</strong> <span id="hexVal">#000000</span></div>
     </div>
 
-    <button class="copy-btn" id="copyBtn">📋 Copy HEX</button>
+    <button class="copy-btn" id="copyBtn" aria-label="Copy Hex">
+      <svg viewBox="0 0 24 24">
+        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z"/>
+      </svg>
+    </button>
   </div>
 
   <script>
@@ -220,9 +225,9 @@
     }
 
     function updateColor() {
-      const r = parseInt(sliders.r.value);
-      const g = parseInt(sliders.g.value);
-      const b = parseInt(sliders.b.value);
+      const r = +sliders.r.value;
+      const g = +sliders.g.value;
+      const b = +sliders.b.value;
 
       const rgb = `rgb(${r}, ${g}, ${b})`;
       const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
@@ -247,29 +252,17 @@
       slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${value}%, #ddd ${value}%)`;
     }
 
+    copyBtn.addEventListener("click", () => {
+      const hex = hexText.textContent;
+      navigator.clipboard.writeText(hex).then(() => {
+        alert(`Copied ${hex} to clipboard!`);
+      });
+    });
+
     Object.values(sliders).forEach(slider => {
       slider.addEventListener('input', updateColor);
     });
 
-    copyBtn.addEventListener('click', function (e) {
-      const hex = hexText.textContent;
-      navigator.clipboard.writeText(hex);
-      alert(`Copied ${hex} to clipboard!`);
-    });
-
-    // Custom ripple coordinates
-    copyBtn.addEventListener("touchstart", rippleCoords);
-    copyBtn.addEventListener("mousedown", rippleCoords);
-
-    function rippleCoords(e) {
-      const rect = this.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-      this.style.setProperty("--x", `${y}px`);
-      this.style.setProperty("--y", `${x}px`);
-    }
-
-    // Initialize
     updateColor();
   </script>
 </body>
