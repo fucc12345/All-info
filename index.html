@@ -7,60 +7,44 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         :root {
-            --primary-color: #4285F4;
-            --background-color: #f0f2f5;
-            --card-background: #ffffff;
-            --text-color: #333;
-            --key-color: #5f6368;
-            --value-bg-color: #f1f3f4;
-            --border-color: #e0e0e0;
-            --shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
-            --success-color: #34A853;
-            --error-color: #EA4335;
+            --primary-color: #4285F4; --background-color: #f0f2f5; --card-background: #ffffff;
+            --text-color: #333; --key-color: #5f6368; --value-bg-color: #f1f3f4;
+            --border-color: #e0e0e0; --shadow: 0 4px 12px 0 rgba(0,0,0,0.12);
+            --success-color: #34A853; --error-color: #EA4335; --prompt-color: #f9ab00;
         }
         body { font-family: 'Roboto', sans-serif; background-color: var(--background-color); color: var(--text-color); margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1500px; margin: 0 auto; }
         header { text-align: center; margin-bottom: 30px; }
         header h1 { font-weight: 500; font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px; }
         header p { font-size: 1.1rem; color: var(--key-color); margin-top: 0; }
-        
-        /* Search Bar Styling */
         .search-container { margin: 25px auto; max-width: 600px; display: flex; align-items: center; background: var(--card-background); border-radius: 24px; box-shadow: var(--shadow); }
         #search-input { flex-grow: 1; border: none; outline: none; padding: 12px 20px; font-size: 1rem; background: transparent; }
-        #search-button { background: var(--primary-color); border: none; border-radius: 0 24px 24px 0; padding: 12px 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .button { position: relative; overflow: hidden; cursor: pointer; transition: background-color 0.2s; -webkit-tap-highlight-color: transparent; }
+        #search-button { background: var(--primary-color); border: none; border-radius: 0 24px 24px 0; padding: 12px 18px; display: flex; align-items: center; justify-content: center; }
         #search-button svg { fill: white; width: 20px; height: 20px; }
-
-        /* Ripple Effect */
         .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.5); transform: scale(0); animation: ripple 600ms linear; pointer-events: none; }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
-
-        #copy-button { padding: 10px 20px; font-size: 1rem; font-weight: 500; color: var(--primary-color); background-color: transparent; border: 2px solid var(--primary-color); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; margin-top: 10px; }
+        #copy-button { padding: 10px 20px; font-size: 1rem; font-weight: 500; color: var(--primary-color); background-color: transparent; border: 2px solid var(--primary-color); border-radius: 8px; transition: all 0.2s ease; margin-top: 10px; }
         #copy-button:hover { background-color: #e8f0fe; }
         #copy-button.success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
-
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
-        .card { background: var(--card-background); border-radius: 12px; box-shadow: var(--shadow); padding: 25px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 25px; }
+        .card { background: var(--card-background); border-radius: 12px; box-shadow: var(--shadow); padding: 25px; display: flex; flex-direction: column; transition: transform 0.3s ease, opacity 0.3s ease; }
         .card.hidden { transform: scale(0.95); opacity: 0; display: none; }
         .card h2 { display: flex; align-items: center; font-size: 1.4rem; font-weight: 500; margin-top: 0; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-color); }
         .card h2 .icon { margin-right: 12px; width: 24px; height: 24px; }
-        .info-grid { display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: start; }
+        .info-grid { display: grid; grid-template-columns: 180px 1fr; gap: 12px; align-items: start; }
         .info-grid .key { font-weight: 500; color: var(--key-color); font-size: 0.9rem; padding-top: 5px; }
-        .info-grid .value { font-family: 'Menlo', 'Consolas', monospace; background-color: var(--value-bg-color); padding: 5px 10px; border-radius: 6px; font-size: 0.9rem; word-break: break-all; line-height: 1.4; }
-        
-        .list-value { max-height: 150px; overflow-y: auto; background-color: var(--value-bg-color); padding: 8px; border-radius: 6px; }
-        .list-value div { font-family: monospace; font-size: 0.85rem; border-bottom: 1px solid #ddd; padding: 4px 2px; }
-        .list-value div:last-child { border-bottom: none; }
-
-        .status { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; text-transform: capitalize; }
-        .status.true, .status.granted { background-color: #e6f4ea; color: var(--success-color); }
-        .status.false, .status.denied { background-color: #fce8e6; color: var(--error-color); }
-        .status.prompt { background-color: #feefc3; color: #f9ab00; }
-
-        #media-button { display: block; width: 100%; padding: 12px; font-size: 1rem; font-weight: 500; color: #fff; background-color: var(--primary-color); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; margin-bottom: 15px; position: relative; overflow: hidden; }
-        #media-button:hover { background-color: #3367D6; }
-        
-        #font-list .font-item { display: inline-block; background: var(--value-bg-color); padding: 2px 8px; border-radius: 4px; margin: 2px; font-family: monospace; }
-        
+        .value { font-family: 'Menlo', 'Consolas', monospace; background-color: var(--value-bg-color); padding: 5px 10px; border-radius: 6px; font-size: 0.9rem; word-break: break-all; line-height: 1.4; display: flex; align-items: center; }
+        .list-value { max-height: 180px; overflow-y: auto; background-color: var(--value-bg-color); padding: 8px; border-radius: 6px; font-size: 0.85rem; }
+        .list-value div { font-family: monospace; border-bottom: 1px solid #ddd; padding: 4px 2px; }
+        .status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; text-transform: capitalize; }
+        .status.granted { background-color: #e6f4ea; color: var(--success-color); }
+        .status.denied { background-color: #fce8e6; color: var(--error-color); }
+        .status.prompt { background-color: #feefc3; color: var(--prompt-color); }
+        .permission-row { display: flex; align-items: center; justify-content: space-between; }
+        .permission-request-btn { font-size: 0.8rem; padding: 2px 8px; border: 1px solid var(--primary-color); color: var(--primary-color); background: none; border-radius: 4px; margin-left: 10px; }
+        .spinner { border: 2px solid #f3f3f3; border-top: 2px solid var(--primary-color); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; margin-right: 8px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #no-results { text-align: center; color: var(--key-color); font-size: 1.2rem; padding: 40px; display: none; }
     </style>
 </head>
@@ -69,206 +53,314 @@
     <div class="container">
         <header>
             <h1>Ultimate Browser Fingerprint</h1>
-            <p>A comprehensive, real-time report of detectable information, now with live search.</p>
+            <p>An exhaustive, real-time report of your browser's digital identity.</p>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search all information (e.g., IP, GPU, Font)...">
-                <button id="search-button">
+                <button id="search-button" class="button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                 </button>
             </div>
-            <button id="copy-button">Copy Full Report</button>
+            <button id="copy-button" class="button">Copy Full Report</button>
         </header>
 
         <div class="grid-container" id="grid-container">
-            <!-- Cards will be dynamically populated here -->
+            <!-- Cards will be dynamically populated by JS -->
         </div>
         <div id="no-results">No results found for your query.</div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const grid = document.getElementById('grid-container');
-
-        // --- TEMPLATE FOR CARDS ---
-        const cardTemplates = [
-            { id: 'navigator', title: 'Navigator', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/>' },
-            { id: 'network', title: 'Network & IP', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-2.29.86-4.38 2.25-5.94L16.94 18.25C15.38 19.64 13.29 20.5 11 20.5c-1.8 0-3.48-.56-4.9-1.52L3.5 12zM19.75 18.25L7.06 5.75C8.62 4.36 10.71 3.5 13 3.5c4.69 0 8.5 3.81 8.5 8.5 0 2.29-.86 4.38-2.25 5.94z"/>' },
-            { id: 'fingerprint', title: 'Advanced Fingerprinting', icon: '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5.67-1.5 1.5S5.67 15 6.5 15s1.5-.67 1.5-1.5S7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>' },
-            { id: 'webrtc', title: 'WebRTC Leak Test', icon: '<path d="M17 10.5V7c0-1.66-1.34-3-3-3H3c-1.66 0-3 1.34-3 3v10c0 1.66 1.34 3 3 3h11c1.66 0 3-1.34 3-3v-3.5l4 4v-11l-4 4zM15 18H3V6h11v12z"/>' },
-            { id: 'display', title: 'Display', icon: '<path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/>' },
-            { id: 'gpu', title: 'GPU & Graphics', icon: '<path d="M9 2L7 4H2v15h20V4h-5l-2-2H9zm8 14H7V8h10v8zm-5-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>' },
-            { id: 'time', title: 'Time & Date', icon: '<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>' },
-            { id: 'hardware', title: 'Hardware', icon: '<path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 .9-2 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/>' },
-            { id: 'fonts', title: 'Installed Fonts', icon: '<path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/>' },
-            { id: 'plugins', title: 'Plugins & MIME Types', icon: '<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>'},
-            { id: 'permissions', title: 'Permissions & Storage', icon: '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>' },
-            { id: 'sensors', title: 'Sensors & Speech', icon: '<path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>' },
-            { id: 'media', title: 'Media Devices', icon: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>' },
-        ];
-        
-        // --- DYNAMICALLY CREATE CARDS ---
-        cardTemplates.forEach(template => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = `${template.id}-card`;
-            card.innerHTML = `
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${template.icon}</svg>
-                    ${template.title}
-                </h2>
-                <div class="info-grid"></div>
-                <div id="${template.id}-extra"></div>`;
-            grid.appendChild(card);
-        });
-        
-        // --- HELPER FUNCTIONS ---
-        const displayInfo = (cardId, key, value) => {
-            const grid = document.querySelector(`#${cardId}-card .info-grid`);
-            if (!grid) return null;
-            const keyEl = document.createElement('div'); keyEl.className = 'key'; keyEl.textContent = key;
-            const valEl = document.createElement('div'); valEl.className = 'value';
-            if (typeof value === 'boolean') {
-                const s = document.createElement('span'); s.className = `status ${value}`; s.textContent = value ? 'Yes' : 'No'; valEl.appendChild(s);
-            } else { valEl.textContent = value === undefined || value === null || value === '' ? 'N/A' : value; }
-            grid.appendChild(keyEl); grid.appendChild(valEl);
-            return valEl;
-        };
-        const simpleHash = str => { let h=0;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h=(h<<5)-h+c;h&=h;}return new Uint32Array([h])[0].toString(16); };
-        const createRipple = (event) => {
-            const button = event.currentTarget;
-            const circle = document.createElement("span");
-            const diameter = Math.max(button.clientWidth, button.clientHeight);
-            const radius = diameter / 2;
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
-            circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
-            circle.classList.add("ripple");
-            button.appendChild(circle);
-            setTimeout(() => circle.remove(), 600);
+        // --- CORE UI AND HELPERS ---
+        const UI = {
+            grid: document.getElementById('grid-container'),
+            cardTemplates: [
+                { id: 'navigator', title: 'Navigator', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/>' },
+                { id: 'network', title: 'Network & IP', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-2.29.86-4.38 2.25-5.94L16.94 18.25C15.38 19.64 13.29 20.5 11 20.5c-1.8 0-3.48-.56-4.9-1.52L3.5 12zM19.75 18.25L7.06 5.75C8.62 4.36 10.71 3.5 13 3.5c4.69 0 8.5 3.81 8.5 8.5 0 2.29-.86 4.38-2.25 5.94z"/>' },
+                { id: 'webrtc', title: 'WebRTC Leak Test', icon: '<path d="M17 10.5V7c0-1.66-1.34-3-3-3H3c-1.66 0-3 1.34-3 3v10c0 1.66 1.34 3 3 3h11c1.66 0 3-1.34 3-3v-3.5l4 4v-11l-4 4zM15 18H3V6h11v12z"/>' },
+                { id: 'display', title: 'Display & Screen', icon: '<path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/>' },
+                { id: 'hardware', title: 'Hardware & Battery', icon: '<path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 .9-2 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/>' },
+                { id: 'canvas', title: 'Canvas Fingerprint', icon: '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5.67-1.5 1.5S5.67 15 6.5 15s1.5-.67 1.5-1.5S7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>' },
+                { id: 'webgl', title: 'WebGL Deep Dive', icon: '<path d="M9 2L7 4H2v15h20V4h-5l-2-2H9zm8 14H7V8h10v8zm-5-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>' },
+                { id: 'fonts', title: 'Exhaustive Font Detection', icon: '<path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/>' },
+                { id: 'audio', title: 'Audio Fingerprint', icon: '<path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>'},
+                { id: 'locale', title: 'Locale & Intl', icon: '<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.39A8.04 8.04 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.39A7.987 7.987 0 0 1 5.08 16zm2.95-8H5.08a7.987 7.987 0 0 1 4.21-3.39c-.6  .94-1.06 2.14-1.38 3.39zm6.01 11.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM16.34 14h-3.38c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2zm.82 3.39c.6-.94 1.06-2.14 1.38-3.39h2.95A8.04 8.04 0 0 1 19.37 16z"/>' },
+                { id: 'quirks', title: 'Engine Quirks', icon: '<path d="M19.5 12c0-.23-.01-.45-.03-.68l1.86-1.41c.16-.12.2-.34.08-.51l-1.73-3c-.12-.21-.38-.28-.59-.18l-2.22.89c-.43-.33-.9-.61-1.41-.83l-.32-2.4c-.04-.26-.27-.46-.53-.46h-3.46c-.26 0-.49.2-.53.46l-.32 2.4c-.51.22-.98.5-1.41.83l-2.22-.89c-.21-.09-.47-.03-.59.18l-1.73 3c-.12.17-.08.39.08.51l1.86 1.41c-.02.23-.03.45-.03.68s.01.45.03.68l-1.86 1.41c-.16.12-.2.34-.08.51l1.73 3c.12.21.38.28.59.18l2.22-.89c.43.33.9.61 1.41.83l.32 2.4c.04.26.27.46.53.46h3.46c.26 0 .49-.2.53-.46l.32 2.4c.51-.22.98-.5 1.41-.83l2.22.89c.21.09.47.03.59.18l1.73-3c.12-.17.08-.39.08-.51l-1.86-1.41c.02-.23.03-.45.03-.68zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>' },
+                { id: 'permissions', title: 'Permissions & Storage', icon: '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>' },
+                { id: 'media', title: 'Media Devices', icon: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>' }
+            ],
+            init() {
+                this.cardTemplates.forEach(template => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.id = `${template.id}-card`;
+                    card.innerHTML = `<h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${template.icon}</svg>${template.title}</h2><div class="info-grid"></div><div id="${template.id}-extra"></div>`;
+                    this.grid.appendChild(card);
+                });
+                document.querySelectorAll('.button').forEach(btn => btn.addEventListener('click', this.createRipple));
+            },
+            displayInfo(cardId, key, value) {
+                const grid = document.querySelector(`#${cardId}-card .info-grid`);
+                if (!grid) return null;
+                const keyEl = document.createElement('div'); keyEl.className = 'key'; keyEl.textContent = key;
+                const valEl = document.createElement('div'); valEl.className = 'value';
+                if (value === '...loading...') {
+                    valEl.innerHTML = `<div class="spinner"></div><span>Detecting...</span>`;
+                } else if (typeof value === 'boolean') {
+                    valEl.innerHTML = `<span class="status ${value}">${value ? 'Supported' : 'Unsupported'}</span>`;
+                } else {
+                    valEl.textContent = value === undefined || value === null || value === '' ? 'N/A' : value;
+                }
+                grid.appendChild(keyEl); grid.appendChild(valEl);
+                return valEl;
+            },
+            createRipple(event) {
+                const button = event.currentTarget;
+                const circle = document.createElement("span");
+                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${event.clientX - button.getBoundingClientRect().left - diameter / 2}px`;
+                circle.style.top = `${event.clientY - button.getBoundingClientRect().top - diameter / 2}px`;
+                circle.classList.add("ripple");
+                button.querySelector('.ripple')?.remove();
+                button.appendChild(circle);
+            }
         };
 
-        // --- DETECTION MODULES ---
-        const runDetections = () => {
-            // Navigator
-            const navId = 'navigator';
-            displayInfo(navId, 'User Agent', navigator.userAgent);
-            displayInfo(navId, 'Platform', navigator.platform);
-            displayInfo(navId, 'Language', navigator.language);
-            displayInfo(navId, 'Cookies Enabled', navigator.cookieEnabled);
-            displayInfo(navId, 'Do Not Track', navigator.doNotTrack || 'Not specified');
-            displayInfo(navId, 'Max Touch Points', navigator.maxTouchPoints || 0);
-            displayInfo(navId, 'Browser Identifiers', `${'chrome' in window ? 'Chrome ' : ''}${typeof InstallTrigger !== 'undefined' ? 'Firefox ' : ''}`);
-
-            // Network
-            const netId = 'network';
-            displayInfo(netId, 'Online Status', navigator.onLine);
-            const conn = navigator.connection;
-            if (conn) { displayInfo(netId, 'Connection Type', conn.effectiveType); displayInfo(netId, 'Downlink (Mbps)', conn.downlink || 'N/A'); }
-            const ipv4 = displayInfo(netId, 'Public IPv4', 'Detecting...');
-            const ipv6 = displayInfo(netId, 'Public IPv6', 'Detecting...');
-            fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => ipv4.textContent = d.ip).catch(() => ipv4.textContent = 'Error/Unavailable');
-            fetch('https://api64.ipify.org?format=json').then(r => r.json()).then(d => ipv6.textContent = d.ip).catch(() => ipv6.textContent = 'Error/Unavailable');
-
-            // WebRTC Leak
-            const rtcId = 'webrtc';
-            const rtcEl = displayInfo(rtcId, 'Local IP Address', 'Testing...');
-            const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-            if (RTCPeerConnection) {
-                const pc = new RTCPeerConnection({ iceServers: [] });
-                pc.createDataChannel('');
-                pc.createOffer().then(o => pc.setLocalDescription(o));
-                pc.onicecandidate = e => { if (e && e.candidate && e.candidate.candidate) { const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(e.candidate.candidate)?.[1]; if (ip) { rtcEl.textContent = ip; pc.onicecandidate = null; } }};
-            } else { rtcEl.textContent = "WebRTC not supported"; }
-
-            // Display
-            const dispId = 'display';
-            displayInfo(dispId, 'Resolution', `${screen.width}x${screen.height}`);
-            displayInfo(dispId, 'Available Viewport', `${screen.availWidth}x${screen.availHeight}`);
-            displayInfo(dispId, 'Window Size', `${window.innerWidth}x${window.innerHeight}`);
-            displayInfo(dispId, 'Pixel Ratio', window.devicePixelRatio);
-            displayInfo(dispId, 'Color Depth', `${screen.colorDepth}-bit`);
-
-            // GPU
-            const gpuId = 'gpu';
-            try {
-                const c = document.createElement('canvas'), gl = c.getContext('webgl'), dbg = gl.getExtension('WEBGL_debug_renderer_info');
-                displayInfo(gpuId, 'Vendor', gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
-                displayInfo(gpuId, 'Renderer', gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
-            } catch (e) { displayInfo(gpuId, 'Info', 'Could not get WebGL context'); }
+        // --- ALL DETECTION LOGIC ---
+        const Detections = {
+            simpleHash: str => { let h = 0; for (let i = 0; i < str.length; i++) { h = Math.imul(31, h) + str.charCodeAt(i) | 0; } return new Uint32Array([h])[0].toString(16); },
             
-            // Hardware
-            const hwId = 'hardware';
-            displayInfo(hwId, 'CPU Cores', navigator.hardwareConcurrency || 'N/A');
-            displayInfo(hwId, 'Device Memory (GB)', navigator.deviceMemory ? `${navigator.deviceMemory} (approx.)` : 'N/A');
+            runAll: async () => {
+                const start = performance.now();
+                console.log('Fingerprinting started...');
 
-            // Time
-            const timeId = 'time';
-            displayInfo(timeId, 'System Time', new Date().toLocaleString());
-            displayInfo(timeId, 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+                // Run fast, synchronous detections first
+                Detections.runNavigator();
+                Detections.runDisplay();
+                Detections.runHardware();
+                Detections.runTime();
+                Detections.runQuirks();
 
-            // Fingerprinting
-            const fpId = 'fingerprint';
-            try { const c = document.createElement('canvas'), ctx = c.getContext('2d'); ctx.fillText('test', 0, 0); displayInfo(fpId, 'Canvas Fingerprint', simpleHash(c.toDataURL())); } catch (e) { displayInfo(fpId, 'Canvas Fingerprint', 'Error'); }
-            const audioEl = displayInfo(fpId, 'Audio Fingerprint', 'Processing...');
-            try { const actx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100),o=actx.createOscillator(),c=actx.createDynamicsCompressor();o.connect(c);c.connect(actx.destination);o.start(0);actx.startRendering().then(b=>{const h=simpleHash(b.getChannelData(0).slice(4500,5e3).reduce((a,v)=>a+Math.abs(v),0).toString());audioEl.textContent=h;}); } catch (e) { audioEl.textContent = 'Not Supported'; }
+                // Run all async detections concurrently
+                await Promise.allSettled([
+                    Detections.runNetwork(),
+                    Detections.runWebRTC(),
+                    Detections.runCanvas(),
+                    Detections.runWebGL(),
+                    Detections.runFonts(),
+                    Detections.runAudio(),
+                    Detections.runLocale(),
+                    Detections.runPermissions(),
+                    Detections.runMedia()
+                ]);
+
+                console.log(`Fingerprinting finished in ${ (performance.now() - start).toFixed(2) }ms`);
+            },
+
+            runNavigator: () => {
+                const id = 'navigator';
+                UI.displayInfo(id, 'User Agent', navigator.userAgent);
+                UI.displayInfo(id, 'Platform', navigator.platform);
+                UI.displayInfo(id, 'Vendor', navigator.vendor);
+                UI.displayInfo(id, 'Language(s)', navigator.languages.join(', '));
+                UI.displayInfo(id, 'Cookies Enabled', navigator.cookieEnabled);
+                UI.displayInfo(id, 'Do Not Track', navigator.doNotTrack || 'N/A');
+                UI.displayInfo(id, 'PDF Viewer', navigator.pdfViewerEnabled);
+            },
+
+            runDisplay: () => {
+                const id = 'display';
+                UI.displayInfo(id, 'Screen Resolution', `${screen.width}x${screen.height}`);
+                UI.displayInfo(id, 'Available Viewport', `${screen.availWidth}x${screen.availHeight}`);
+                UI.displayInfo(id, 'Window Size', `${window.innerWidth}x${window.innerHeight}`);
+                UI.displayInfo(id, 'Pixel Ratio', window.devicePixelRatio);
+                UI.displayInfo(id, 'Color Depth', `${screen.colorDepth}-bit`);
+                UI.displayInfo(id, 'Orientation', screen.orientation.type);
+                UI.displayInfo(id, 'Extended Display', 'isExtended' in screen ? screen.isExtended : 'N/A');
+            },
+
+            runHardware: async () => {
+                const id = 'hardware';
+                UI.displayInfo(id, 'CPU Cores', navigator.hardwareConcurrency || 'N/A');
+                UI.displayInfo(id, 'Device Memory (GB)', 'deviceMemory' in navigator ? `~${navigator.deviceMemory} GB` : 'N/A');
+                UI.displayInfo(id, 'Max Touch Points', navigator.maxTouchPoints);
+                if ('getBattery' in navigator) {
+                    const el = UI.displayInfo(id, 'Battery', '...loading...');
+                    try {
+                        const bat = await navigator.getBattery();
+                        el.textContent = `${Math.round(bat.level*100)}% (${bat.charging ? 'Charging' : 'Discharging'})`;
+                    } catch(e){ el.textContent = "Error"; }
+                }
+            },
+
+            runTime: () => UI.displayInfo('time', 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone),
+
+            runQuirks: () => {
+                const id = 'quirks';
+                try { (null)(); } catch(e){ UI.displayInfo(id, 'Error Message Hash', Detections.simpleHash(e.message)); }
+                UI.displayInfo(id, 'Math.tan(-1e300)', Math.tan(-1e300));
+            },
             
-            // Fonts
-            const fontId = 'fonts';
-            const fontsToTest = ['Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Calibri', 'Consolas', 'Menlo', 'Roboto'];
-            const baseFonts = ['monospace', 'sans-serif', 'serif'];
-            const s = document.createElement("span"); s.innerHTML = "mmmmmmmmmmlli"; s.style.fontSize = '72px';
-            const defaultWidth = {}; baseFonts.forEach(f => { s.style.fontFamily = f; document.body.appendChild(s); defaultWidth[f] = s.offsetWidth; document.body.removeChild(s); });
-            const foundFonts = fontsToTest.filter(f => baseFonts.some(bf => { s.style.fontFamily = `"${f}",${bf}`; document.body.appendChild(s); const w = s.offsetWidth; document.body.removeChild(s); return w !== defaultWidth[bf]; }));
-            displayInfo(fontId, 'Detected Fonts', `${foundFonts.length} / ${fontsToTest.length}`);
-            const fontListEl = document.querySelector(`#${fontId}-extra`); fontListEl.id = 'font-list';
-            if (foundFonts.length > 0) { foundFonts.forEach(f => { const el = document.createElement('span'); el.className = 'font-item'; el.textContent = f; fontListEl.appendChild(el); }); } else { fontListEl.textContent = "No common fonts detected."; }
+            runNetwork: async () => {
+                const id = 'network';
+                const ip4El = UI.displayInfo(id, 'Public IPv4', '...loading...');
+                const ip6El = UI.displayInfo(id, 'Public IPv6', '...loading...');
+                try { const r = await fetch('https://api.ipify.org?format=json'); ip4El.textContent = (await r.json()).ip; } catch(e){ ip4El.textContent = "Unavailable"; }
+                try { const r = await fetch('https://api64.ipify.org?format=json'); ip6El.textContent = (await r.json()).ip; } catch(e){ ip6El.textContent = "Unavailable"; }
+            },
+
+            runWebRTC: async () => {
+                const id = 'webrtc';
+                const el = UI.displayInfo(id, 'Local IP', '...loading...');
+                const RTCPeerConnection = window.RTCPeerConnection;
+                if (!RTCPeerConnection) { el.textContent = 'Unsupported'; return; }
+                try {
+                    const pc = new RTCPeerConnection({ iceServers: [] });
+                    pc.createDataChannel('');
+                    pc.onicecandidate = e => { if (!e || !e.candidate || !e.candidate.candidate) return; const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(e.candidate.candidate)?.[1]; if (ip) { el.textContent = ip; pc.close(); }};
+                    await pc.createOffer().then(o => pc.setLocalDescription(o));
+                } catch(e){ el.textContent = "Error"; }
+            },
+
+            runCanvas: async () => {
+                const id = 'canvas';
+                const el = UI.displayInfo(id, '2D Render Hash', '...loading...');
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 200; canvas.height = 60;
+                    const ctx = canvas.getContext('2d');
+                    ctx.textBaseline = "alphabetic";
+                    ctx.fillStyle = "#f60"; ctx.fillRect(125,1,62,20);
+                    ctx.fillStyle = "#069"; ctx.font = "11pt 'Arial'"; ctx.fillText("Cwm fjordbank glyphs vext quiz, 😃", 2, 15);
+                    ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18pt 'Times New Roman'"; ctx.fillText("Cwm fjordbank glyphs vext quiz, 😃", 4, 45);
+                    ctx.globalCompositeOperation = "multiply";
+                    ctx.fillStyle = "rgb(255,0,255)"; ctx.beginPath(); ctx.arc(75, 25, 20, 0, Math.PI * 2, true); ctx.closePath(); ctx.fill();
+                    el.textContent = Detections.simpleHash(canvas.toDataURL());
+                } catch(e) { el.textContent = "Error"; }
+            },
+
+            runWebGL: async () => {
+                const id = 'webgl';
+                const hashEl = UI.displayInfo(id, '3D Render Hash', '...loading...');
+                try {
+                    const canvas = document.createElement('canvas');
+                    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+                    if (!gl) { UI.displayInfo(id, 'WebGL', false); return; }
+                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                    UI.displayInfo(id, 'Vendor', dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'N/A');
+                    UI.displayInfo(id, 'Renderer', dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'N/A');
+                    
+                    const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+                    const fs = `void main(){gl_FragColor=vec4(1,0,1,1);}`;
+                    const prog = gl.createProgram(); gl.attachShader(prog, (s => { gl.shaderSource(s, vs); gl.compileShader(s); return s })(gl.createShader(gl.VERTEX_SHADER))); gl.attachShader(prog, (s => { gl.shaderSource(s, fs); gl.compileShader(s); return s })(gl.createShader(gl.FRAGMENT_SHADER))); gl.linkProgram(prog); gl.useProgram(prog);
+                    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+                    const attr = gl.getAttribLocation(prog, "p"); gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(attr);
+                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                    const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+                    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+                    hashEl.textContent = Detections.simpleHash(pixels.join(','));
+
+                    const extEl = document.querySelector(`#${id}-extra`);
+                    extEl.className = 'list-value';
+                    extEl.innerHTML = `<div><strong>Supported Extensions:</strong></div>` + (gl.getSupportedExtensions().map(e => `<div>${e}</div>`).join('') || '<div>None</div>');
+                } catch(e) { hashEl.textContent = "Error"; console.error(e); }
+            },
             
-            // Plugins
-            const pluginId = 'plugins';
-            displayInfo(pluginId, 'Plugin Count', navigator.plugins.length);
-            const pluginListEl = document.querySelector(`#${pluginId}-extra`);
-            pluginListEl.className = 'list-value';
-            if (navigator.plugins.length > 0) { Array.from(navigator.plugins).forEach(p => { pluginListEl.innerHTML += `<div><strong>${p.name}</strong> (${p.filename})</div>`; }); } else { pluginListEl.innerHTML = "<div>No plugins detected.</div>"; }
+            runFonts: async () => {
+                const id = 'fonts';
+                const el = UI.displayInfo(id, 'Detected Fonts', '...loading...');
+                const fontListEl = document.querySelector(`#${id}-extra`);
+                fontListEl.className = 'list-value';
+                
+                const fonts = ["Arial","Arial Black","Bahnschrift","Calibri","Cambria","Cambria Math","Candara","Comic Sans MS","Consolas","Constantia","Corbel","Courier New","Ebrima","Franklin Gothic Medium","Gabriola","Gadugi","Georgia","Impact","Ink Free","Javanese Text","Leelawadee UI","Lucida Console","Lucida Sans Unicode","Malgun Gothic","Marlett","Microsoft Himalaya","Microsoft JhengHei","Microsoft New Tai Lue","Microsoft PhagsPa","Microsoft Sans Serif","Microsoft Tai Le","Microsoft YaHei","Microsoft Yi Baiti","MingLiU-ExtB","Mongolian Baiti","MS Gothic","MV Boli","Myanmar Text","Nirmala UI","Palatino Linotype","Segoe Print","Segoe Script","Segoe UI","Segoe UI Historic","Segoe UI Emoji","Segoe UI Symbol","SimSun","Sitka","Sylfaen","Symbol","Tahoma","Times New Roman","Trebuchet MS","Verdana","Webdings","Wingdings","Yu Gothic", "American Typewriter", "Andale Mono", "Apple Chancery", "AppleGothic", "Avenir", "Avenir Next", "Baskerville", "Big Caslon", "Bodoni 72", "Bradley Hand", "Brush Script MT", "Chalkboard", "Chalkduster", "Charter", "Cochin", "Copperplate", "Courier", "Didot", "Futura", "Geneva", "Gill Sans", "Helvetica", "Helvetica Neue", "Herculanum", "Hoefler Text", "Iowan Old Style", "Lucida Grande", "Luminari", "Marker Felt", "Menlo", "Monaco", "Noteworthy", "Optima", "Palatino", "Papyrus", "Phosphate", "Rockwell", "Savoye LET", "Seravek", "SignPainter", "Skia", "Snell Roundhand", "Times", "Trattatello", "Zapfino", "Cantarell", "Carlito", "Droid Sans", "Liberation Sans", "Noto Sans", "Ubuntu"];
+                
+                await new Promise(res => setTimeout(res, 50)); // Allow UI to update
+                try {
+                    const baseFonts = ['monospace', 'sans-serif', 'serif'];
+                    const s = document.createElement("span"); s.innerHTML = "mmmmmmmmmmlli"; s.style.fontSize = '72px';
+                    const defaultWidths = {}; baseFonts.forEach(f => { s.style.fontFamily = f; document.body.appendChild(s); defaultWidths[f] = s.offsetWidth; document.body.removeChild(s); });
+                    const foundFonts = fonts.filter(f => baseFonts.some(bf => { s.style.fontFamily = `"${f}",${bf}`; document.body.appendChild(s); const w = s.offsetWidth; document.body.removeChild(s); return w !== defaultWidths[bf]; }));
+                    
+                    el.textContent = `${foundFonts.length} / ${fonts.length}`;
+                    fontListEl.innerHTML = foundFonts.map(f => `<div>${f}</div>`).join('') || '<div>No unique fonts detected.</div>';
+                } catch(e){ el.textContent = "Error"; }
+            },
+
+            runAudio: async () => {
+                const id = 'audio';
+                const el = UI.displayInfo(id, 'Context Hash', '...loading...');
+                try {
+                    const actx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100);
+                    const o=actx.createOscillator(), c=actx.createDynamicsCompressor();
+                    o.connect(c); c.connect(actx.destination); o.start(0);
+                    const buffer = await actx.startRendering();
+                    el.textContent = Detections.simpleHash(buffer.getChannelData(0).slice(4500,5000).join(','));
+                } catch(e){ el.textContent = 'Unsupported'; }
+            },
             
-            // Permissions
-            const permId = 'permissions';
-            const permsToCheck = ['geolocation', 'notifications', 'camera', 'microphone', 'clipboard-read', 'clipboard-write'];
-            permsToCheck.forEach(p => {
-                const el = displayInfo(permId, p, 'Checking...');
-                navigator.permissions.query({ name: p }).then(status => {
-                    el.innerHTML = '';
-                    const s = document.createElement('span'); s.className = `status ${status.state}`; s.textContent = status.state;
-                    el.appendChild(s);
-                }).catch(() => el.textContent = 'Unsupported');
-            });
-            if (navigator.storage && navigator.storage.estimate) { navigator.storage.estimate().then(e => displayInfo(permId, 'Storage Quota', `${(e.usage/1e6).toFixed(2)} / ${(e.quota/1e6).toFixed(2)} MB`)); }
+            runLocale: () => {
+                const id = 'locale';
+                try {
+                    UI.displayInfo(id, 'Number Format', new Intl.NumberFormat().format(123456.789));
+                    UI.displayInfo(id, 'Date Format', new Intl.DateTimeFormat().format(new Date()));
+                    UI.displayInfo(id, 'Relative Time', new Intl.RelativeTimeFormat().format(-1, 'day'));
+                    UI.displayInfo(id, 'List Format', 'ListFormat' in Intl ? new Intl.ListFormat().format(['a','b','c']) : 'N/A');
+                } catch(e){}
+            },
+
+            runPermissions: async () => {
+                const id = 'permissions';
+                const perms = ['geolocation', 'notifications', 'camera', 'microphone', 'clipboard-read', 'clipboard-write', 'persistent-storage', 'midi'];
+                if (navigator.storage && navigator.storage.estimate) { navigator.storage.estimate().then(e => UI.displayInfo(id, 'Storage Usage', `${(e.usage/1e6).toFixed(2)}/${(e.quota/1e6).toFixed(2)} MB`)); }
+                
+                for(const p of perms) {
+                    try {
+                        const status = await navigator.permissions.query({ name: p });
+                        const el = UI.displayInfo(id, p, '');
+                        el.innerHTML = `<div class="permission-row"><span class="status ${status.state}">${status.state}</span><button class="button permission-request-btn" data-perm="${p}">Request</button></div>`;
+                        el.querySelector('button').addEventListener('click', async (e) => {
+                            const btn = e.target;
+                            let newStatus;
+                            try {
+                                if (p === 'geolocation') { await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:1})); }
+                                else if (p === 'notifications') { await Notification.requestPermission(); }
+                                else if (p === 'camera' || p === 'microphone') { const s = await navigator.mediaDevices.getUserMedia({[p.substring(0,5)]:true}); s.getTracks().forEach(t=>t.stop()); }
+                                newStatus = await navigator.permissions.query({ name: p });
+                            } catch(err){ newStatus = await navigator.permissions.query({ name: p }); } // Update status even on deny
+                            btn.parentElement.querySelector('.status').textContent = newStatus.state;
+                            btn.parentElement.querySelector('.status').className = `status ${newStatus.state}`;
+                        });
+                    } catch(e) { UI.displayInfo(id, p, 'Unsupported'); }
+                }
+            },
             
-            // Sensors
-            const sensorId = 'sensors';
-            displayInfo(sensorId, 'Device Motion', 'listening...');
-            window.addEventListener('devicemotion', e => displayInfo('sensors', 'Device Motion', 'Detected'), { once: true });
-            displayInfo(sensorId, 'Speech Voices', 'Checking...');
-            const voices = speechSynthesis.getVoices();
-            const setVoices = (v) => {
-                const el = document.querySelector(`#${sensorId}-extra`); el.className = 'list-value';
-                displayInfo(sensorId, 'Speech Voices', v.length);
-                if (v.length > 0) { v.forEach(voice => { el.innerHTML += `<div>${voice.name} (${voice.lang})</div>`; }); }
-            };
-            if (voices.length) { setVoices(voices); } else { speechSynthesis.onvoiceschanged = () => setVoices(speechSynthesis.getVoices()); }
-            
-            // Media
-            const mediaCard = document.querySelector('#media-card');
-            mediaCard.querySelector('.info-grid').remove(); // remove grid for this card
-            const mediaExtra = mediaCard.querySelector('#media-extra');
-            mediaExtra.innerHTML = '<button id="media-button">Request Mic & Camera Access</button><div id="media-status">Click button to scan for devices.</div><div id="media-list" class="list-value"></div>';
+            runMedia: async () => {
+                const id = 'media';
+                const card = document.querySelector('#media-card');
+                card.querySelector('.info-grid').remove();
+                card.querySelector(`#${id}-extra`).innerHTML = `<button id="media-button" class="button">Request Mic & Camera Access</button><div id="media-status">Click to scan for devices.</div><div id="media-list" class="list-value"></div>`;
+                card.querySelector('#media-button').addEventListener('click', async (e) => {
+                    UI.createRipple(e);
+                    const statusEl = document.getElementById('media-status'), listEl = document.getElementById('media-list');
+                    statusEl.textContent = 'Requesting...'; listEl.innerHTML = '';
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+                        const devices = await navigator.mediaDevices.enumerateDevices();
+                        statusEl.textContent = 'Input Devices Found:';
+                        devices.filter(d=>d.kind!=='audiooutput' && d.deviceId).forEach(d => { listEl.innerHTML += `<div>[${d.kind.replace('input','').toUpperCase()}] ${d.label || 'no label'}</div>`; });
+                        stream.getTracks().forEach(t => t.stop());
+                    } catch (err) { statusEl.textContent = `Error: ${err.name}`; }
+                });
+            }
         };
 
-        // --- UI INTERACTION SETUP ---
-        const setupUI = () => {
-            // Ripple effect
-            document.querySelectorAll('#search-button, #media-button').forEach(btn => btn.addEventListener('click', createRipple));
+        // --- FINAL SETUP AND INITIALIZATION ---
+        const init = () => {
+            UI.init();
+            Detections.runAll();
             
-            // Search
+            // Setup Search
             const searchInput = document.getElementById('search-input');
             const allCards = document.querySelectorAll('.card');
             const noResultsEl = document.getElementById('no-results');
@@ -277,55 +369,36 @@
                 let visibleCount = 0;
                 allCards.forEach(card => {
                     const content = card.innerText.toLowerCase();
-                    if (content.includes(term)) {
-                        card.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        card.classList.add('hidden');
-                    }
+                    if (content.includes(term)) { card.classList.remove('hidden'); visibleCount++; } 
+                    else { card.classList.add('hidden'); }
                 });
                 noResultsEl.style.display = visibleCount === 0 ? 'block' : 'none';
             });
             
-            // Media Button
-            document.getElementById('media-button').addEventListener('click', async () => {
-                const statusEl = document.getElementById('media-status'), listEl = document.getElementById('media-list');
-                statusEl.textContent = 'Requesting...'; listEl.innerHTML = '';
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                    statusEl.textContent = 'Input Devices Found:';
-                    const devices = await navigator.mediaDevices.enumerateDevices();
-                    devices.filter(d => d.kind !== 'audiooutput').forEach(d => { listEl.innerHTML += `<div>[${d.kind.replace('input', '')}] ${d.label || `(no label)`}</div>`; });
-                    stream.getTracks().forEach(t => t.stop());
-                } catch (err) { statusEl.textContent = `Error: ${err.name}`; }
-            });
-            
-            // Copy Button
-            document.getElementById('copy-button').addEventListener('click', async () => {
+            // Setup Copy Button
+            document.getElementById('copy-button').addEventListener('click', async (e) => {
+                UI.createRipple(e);
                 let report = '--- Ultimate Browser Fingerprint Report ---\n\n';
                 document.querySelectorAll('.card:not(.hidden)').forEach(card => {
-                    const title = card.querySelector('h2').textContent.trim();
-                    report += `--- ${title} ---\n`;
+                    report += `--- ${card.querySelector('h2').textContent.trim()} ---\n`;
                     card.querySelectorAll('.info-grid .key').forEach((keyEl, i) => {
-                        const valEl = card.querySelectorAll('.info-grid .value')[i];
+                        const valEl = card.querySelectorAll('.value')[i];
                         if (valEl) report += `${keyEl.textContent}: ${valEl.textContent}\n`;
                     });
-                    const extraContent = card.querySelector('.list-value, #font-list');
-                    if (extraContent && extraContent.innerText) report += `${extraContent.innerText}\n`;
+                    const extra = card.querySelector('.list-value');
+                    if(extra && extra.innerText) report += extra.innerText + '\n';
                     report += '\n';
                 });
                 try {
                     await navigator.clipboard.writeText(report);
-                    const btn = document.getElementById('copy-button');
+                    const btn = e.currentTarget;
                     btn.textContent = 'Copied!'; btn.classList.add('success');
                     setTimeout(() => { btn.textContent = 'Copy Full Report'; btn.classList.remove('success'); }, 2000);
-                } catch (err) { alert('Failed to copy report.'); }
+                } catch (err) { alert('Failed to copy.'); }
             });
         };
 
-        // --- INITIALIZE EVERYTHING ---
-        runDetections();
-        setupUI();
+        init();
     });
     </script>
 </body>
