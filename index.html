@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Browser Fingerprint Tool</title>
+    <title>Ultimate Browser Fingerprint Tool (Robust Edition)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
         :root {
@@ -22,7 +22,7 @@
         .button { position: relative; overflow: hidden; cursor: pointer; transition: background-color 0.2s; -webkit-tap-highlight-color: transparent; }
         #search-button { background: var(--primary-color); border: none; border-radius: 0 24px 24px 0; padding: 12px 18px; display: flex; align-items: center; justify-content: center; }
         #search-button svg { fill: white; width: 20px; height: 20px; }
-        .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.5); transform: scale(0); animation: ripple 600ms linear; pointer-events: none; }
+        .ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.7); transform: scale(0); animation: ripple 600ms linear; pointer-events: none; }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
         #copy-button { padding: 10px 20px; font-size: 1rem; font-weight: 500; color: var(--primary-color); background-color: transparent; border: 2px solid var(--primary-color); border-radius: 8px; transition: all 0.2s ease; margin-top: 10px; }
         #copy-button:hover { background-color: #e8f0fe; }
@@ -39,33 +39,28 @@
         .list-value div { font-family: monospace; border-bottom: 1px solid #ddd; padding: 4px 2px; }
         .status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; text-transform: capitalize; }
         .status.granted { background-color: #e6f4ea; color: var(--success-color); }
-        .status.denied { background-color: #fce8e6; color: var(--error-color); }
-        .status.prompt { background-color: #feefc3; color: var(--prompt-color); }
+        .status.denied, .status.error { background-color: #fce8e6; color: var(--error-color); }
+        .status.prompt, .status.unsupported { background-color: #feefc3; color: var(--prompt-color); }
         .permission-row { display: flex; align-items: center; justify-content: space-between; }
         .permission-request-btn { font-size: 0.8rem; padding: 2px 8px; border: 1px solid var(--primary-color); color: var(--primary-color); background: none; border-radius: 4px; margin-left: 10px; }
+        .permission-request-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
         .spinner { border: 2px solid #f3f3f3; border-top: 2px solid var(--primary-color); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; margin-right: 8px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #no-results { text-align: center; color: var(--key-color); font-size: 1.2rem; padding: 40px; display: none; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
             <h1>Ultimate Browser Fingerprint</h1>
-            <p>An exhaustive, real-time report of your browser's digital identity.</p>
+            <p>A robust, real-time report of your browser's digital identity.</p>
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search all information (e.g., IP, GPU, Font)...">
-                <button id="search-button" class="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                </button>
+                <button id="search-button" class="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button>
             </div>
             <button id="copy-button" class="button">Copy Full Report</button>
         </header>
-
-        <div class="grid-container" id="grid-container">
-            <!-- Cards will be dynamically populated by JS -->
-        </div>
+        <div class="grid-container" id="grid-container"></div>
         <div id="no-results">No results found for your query.</div>
     </div>
 
@@ -74,13 +69,13 @@
         // --- CORE UI AND HELPERS ---
         const UI = {
             grid: document.getElementById('grid-container'),
-            cardTemplates: [
+            cardTemplates: [ /* Card templates are identical to previous version, omitted for brevity but present in full code */
                 { id: 'navigator', title: 'Navigator', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/>' },
                 { id: 'network', title: 'Network & IP', icon: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-2.29.86-4.38 2.25-5.94L16.94 18.25C15.38 19.64 13.29 20.5 11 20.5c-1.8 0-3.48-.56-4.9-1.52L3.5 12zM19.75 18.25L7.06 5.75C8.62 4.36 10.71 3.5 13 3.5c4.69 0 8.5 3.81 8.5 8.5 0 2.29-.86 4.38-2.25 5.94z"/>' },
                 { id: 'webrtc', title: 'WebRTC Leak Test', icon: '<path d="M17 10.5V7c0-1.66-1.34-3-3-3H3c-1.66 0-3 1.34-3 3v10c0 1.66 1.34 3 3 3h11c1.66 0 3-1.34 3-3v-3.5l4 4v-11l-4 4zM15 18H3V6h11v12z"/>' },
                 { id: 'display', title: 'Display & Screen', icon: '<path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/>' },
                 { id: 'hardware', title: 'Hardware & Battery', icon: '<path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 .9-2 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/>' },
-                { id: 'canvas', title: 'Canvas Fingerprint', icon: '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5.67-1.5 1.5S5.67 15 6.5 15s1.5-.67 1.5-1.5S7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>' },
+                { id: 'canvas', title: 'Canvas Fingerprint', icon: '<path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5.67-1.5 1.5S5.67 15 6.5 15s1.5-.67 1.5-1.5S7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/>' },
                 { id: 'webgl', title: 'WebGL Deep Dive', icon: '<path d="M9 2L7 4H2v15h20V4h-5l-2-2H9zm8 14H7V8h10v8zm-5-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>' },
                 { id: 'fonts', title: 'Exhaustive Font Detection', icon: '<path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/>' },
                 { id: 'audio', title: 'Audio Fingerprint', icon: '<path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"/>'},
@@ -92,8 +87,7 @@
             init() {
                 this.cardTemplates.forEach(template => {
                     const card = document.createElement('div');
-                    card.className = 'card';
-                    card.id = `${template.id}-card`;
+                    card.className = 'card'; card.id = `${template.id}-card`;
                     card.innerHTML = `<h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${template.icon}</svg>${template.title}</h2><div class="info-grid"></div><div id="${template.id}-extra"></div>`;
                     this.grid.appendChild(card);
                 });
@@ -106,13 +100,15 @@
                 const valEl = document.createElement('div'); valEl.className = 'value';
                 if (value === '...loading...') {
                     valEl.innerHTML = `<div class="spinner"></div><span>Detecting...</span>`;
-                } else if (typeof value === 'boolean') {
-                    valEl.innerHTML = `<span class="status ${value}">${value ? 'Supported' : 'Unsupported'}</span>`;
                 } else {
-                    valEl.textContent = value === undefined || value === null || value === '' ? 'N/A' : value;
+                    valEl.textContent = value ?? 'N/A';
                 }
                 grid.appendChild(keyEl); grid.appendChild(valEl);
                 return valEl;
+            },
+            handleError(el, err, customMessage = 'Error') {
+                if(el){ el.innerHTML = `<span class="status error">${customMessage}</span>`; }
+                console.error(err);
             },
             createRipple(event) {
                 const button = event.currentTarget;
@@ -127,277 +123,86 @@
             }
         };
 
-        // --- ALL DETECTION LOGIC ---
         const Detections = {
             simpleHash: str => { let h = 0; for (let i = 0; i < str.length; i++) { h = Math.imul(31, h) + str.charCodeAt(i) | 0; } return new Uint32Array([h])[0].toString(16); },
             
             runAll: async () => {
                 const start = performance.now();
-                console.log('Fingerprinting started...');
-
-                // Run fast, synchronous detections first
-                Detections.runNavigator();
-                Detections.runDisplay();
-                Detections.runHardware();
-                Detections.runTime();
-                Detections.runQuirks();
-
-                // Run all async detections concurrently
                 await Promise.allSettled([
-                    Detections.runNetwork(),
-                    Detections.runWebRTC(),
-                    Detections.runCanvas(),
-                    Detections.runWebGL(),
-                    Detections.runFonts(),
-                    Detections.runAudio(),
-                    Detections.runLocale(),
-                    Detections.runPermissions(),
-                    Detections.runMedia()
-                ]);
-
+                    'Navigator', 'Display', 'Hardware', 'Time', 'Quirks', 'Network', 'WebRTC',
+                    'Canvas', 'WebGL', 'Fonts', 'Audio', 'Locale', 'Permissions', 'Media'
+                ].map(name => Detections[`run${name}`]()));
                 console.log(`Fingerprinting finished in ${ (performance.now() - start).toFixed(2) }ms`);
             },
 
-            runNavigator: () => {
-                const id = 'navigator';
-                UI.displayInfo(id, 'User Agent', navigator.userAgent);
-                UI.displayInfo(id, 'Platform', navigator.platform);
-                UI.displayInfo(id, 'Vendor', navigator.vendor);
-                UI.displayInfo(id, 'Language(s)', navigator.languages.join(', '));
-                UI.displayInfo(id, 'Cookies Enabled', navigator.cookieEnabled);
-                UI.displayInfo(id, 'Do Not Track', navigator.doNotTrack || 'N/A');
-                UI.displayInfo(id, 'PDF Viewer', navigator.pdfViewerEnabled);
+            runNavigator:() => { try { const id='navigator'; UI.displayInfo(id, 'User Agent', navigator.userAgent); UI.displayInfo(id, 'Platform', navigator.platform); UI.displayInfo(id, 'Languages', navigator.languages.join(', ')); UI.displayInfo(id, 'Cookies Enabled', navigator.cookieEnabled); UI.displayInfo(id, 'Do Not Track', navigator.doNotTrack ?? 'N/A'); } catch(e){ console.error("Navigator detection failed", e); }},
+            runDisplay:  () => { try { const id='display'; UI.displayInfo(id, 'Screen Resolution', `${screen.width}x${screen.height}`); UI.displayInfo(id, 'Window Size', `${window.innerWidth}x${window.innerHeight}`); UI.displayInfo(id, 'Pixel Ratio', window.devicePixelRatio); UI.displayInfo(id, 'Color Depth', `${screen.colorDepth}-bit`); } catch(e){ console.error("Display detection failed", e); }},
+            runHardware: async () => { try { const id='hardware'; UI.displayInfo(id, 'CPU Cores', navigator.hardwareConcurrency ?? 'N/A'); UI.displayInfo(id, 'Device Memory', 'deviceMemory' in navigator ? `~${navigator.deviceMemory} GB` : 'N/A'); if ('getBattery' in navigator) { const el=UI.displayInfo(id, 'Battery', '...loading...'); try { const b=await navigator.getBattery(); el.textContent=`${Math.round(b.level*100)}% (${b.charging?'Charging':'Discharging'})`; } catch(e){ UI.handleError(el,e); } } else { UI.displayInfo(id, 'Battery', 'Unsupported'); } } catch(e){ console.error("Hardware detection failed", e); }},
+            runTime:     () => { try { UI.displayInfo('time', 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone); } catch(e){ console.error("Timezone detection failed", e); }},
+            runQuirks:   () => { try { const id='quirks'; try {(null)()}catch(e){UI.displayInfo(id,'Error Msg Hash', Detections.simpleHash(e.message));} UI.displayInfo(id,'Math.tan',Math.tan(-1e300)); } catch(e){ console.error("Quirks detection failed", e); }},
+            
+            runNetwork:  async () => { const id='network'; const ip4El=UI.displayInfo(id, 'Public IPv4', '...loading...'); const ip6El=UI.displayInfo(id, 'Public IPv6', '...loading...'); try { const r=await fetch('https://api.ipify.org?format=json'); ip4El.textContent=(await r.json()).ip; } catch(e){ UI.handleError(ip4El,e, 'Unavailable'); } try { const r=await fetch('https://api64.ipify.org?format=json'); ip6El.textContent=(await r.json()).ip; } catch(e){ UI.handleError(ip6El,e, 'Unavailable'); }},
+            
+            runWebRTC:   async () => {
+                const id='webrtc'; const el=UI.displayInfo(id, 'Local IP', '...loading...');
+                if (!window.RTCPeerConnection) { el.innerHTML = `<span class="status unsupported">Unsupported</span>`; return; }
+                const t = setTimeout(() => { if (el.textContent.includes('Detecting')) UI.handleError(el, 'Timeout', 'Not Found'); }, 2000);
+                try {
+                    const pc = new RTCPeerConnection({ iceServers:[] }); pc.createDataChannel('');
+                    pc.onicecandidate = e => { if (!e||!e.candidate||!e.candidate.candidate) return; const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(e.candidate.candidate)?.[1]; if(ip) { clearTimeout(t); el.textContent=ip; pc.close(); }};
+                    await pc.createOffer().then(o=>pc.setLocalDescription(o));
+                } catch(e) { clearTimeout(t); UI.handleError(el,e); }
             },
 
-            runDisplay: () => {
-                const id = 'display';
-                UI.displayInfo(id, 'Screen Resolution', `${screen.width}x${screen.height}`);
-                UI.displayInfo(id, 'Available Viewport', `${screen.availWidth}x${screen.availHeight}`);
-                UI.displayInfo(id, 'Window Size', `${window.innerWidth}x${window.innerHeight}`);
-                UI.displayInfo(id, 'Pixel Ratio', window.devicePixelRatio);
-                UI.displayInfo(id, 'Color Depth', `${screen.colorDepth}-bit`);
-                UI.displayInfo(id, 'Orientation', screen.orientation.type);
-                UI.displayInfo(id, 'Extended Display', 'isExtended' in screen ? screen.isExtended : 'N/A');
-            },
-
-            runHardware: async () => {
-                const id = 'hardware';
-                UI.displayInfo(id, 'CPU Cores', navigator.hardwareConcurrency || 'N/A');
-                UI.displayInfo(id, 'Device Memory (GB)', 'deviceMemory' in navigator ? `~${navigator.deviceMemory} GB` : 'N/A');
-                UI.displayInfo(id, 'Max Touch Points', navigator.maxTouchPoints);
-                if ('getBattery' in navigator) {
-                    const el = UI.displayInfo(id, 'Battery', '...loading...');
-                    try {
-                        const bat = await navigator.getBattery();
-                        el.textContent = `${Math.round(bat.level*100)}% (${bat.charging ? 'Charging' : 'Discharging'})`;
-                    } catch(e){ el.textContent = "Error"; }
-                }
-            },
-
-            runTime: () => UI.displayInfo('time', 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone),
-
-            runQuirks: () => {
-                const id = 'quirks';
-                try { (null)(); } catch(e){ UI.displayInfo(id, 'Error Message Hash', Detections.simpleHash(e.message)); }
-                UI.displayInfo(id, 'Math.tan(-1e300)', Math.tan(-1e300));
+            runCanvas:   async () => { const id='canvas'; const el=UI.displayInfo(id, '2D Render Hash', '...loading...'); try { const c=document.createElement('canvas'); c.width=200;c.height=60;const x=c.getContext('2d'); x.textBaseline="alphabetic";x.fillStyle="#f60";x.fillRect(125,1,62,20);x.fillStyle="#069";x.font="11pt 'Arial'";x.fillText("Cwm fjordbank glyphs vext quiz, 😃",2,15);x.fillStyle="rgba(102,204,0,0.7)";x.font="18pt 'Times New Roman'";x.fillText("Cwm fjordbank glyphs vext quiz, 😃",4,45); el.textContent=Detections.simpleHash(c.toDataURL()); } catch(e) { UI.handleError(el,e); }},
+            
+            runWebGL:    async () => {
+                const id='webgl';
+                if (!window.WebGLRenderingContext) { UI.displayInfo(id, 'WebGL Support', 'Unsupported'); return; }
+                const hashEl=UI.displayInfo(id, '3D Render Hash', '...loading...');
+                try {
+                    const c=document.createElement('canvas'), gl=c.getContext('webgl');
+                    if (!gl) throw new Error('WebGL context failed to initialize.');
+                    const dbg=gl.getExtension('WEBGL_debug_renderer_info');
+                    UI.displayInfo(id, 'Vendor', dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL):'N/A');
+                    UI.displayInfo(id, 'Renderer', dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):'N/A');
+                    const vs=`attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`; const fs=`void main(){gl_FragColor=vec4(1,0,1,1);}`; const prog=gl.createProgram(); gl.attachShader(prog, (s=>{gl.shaderSource(s,vs);gl.compileShader(s);return s;})(gl.createShader(gl.VERTEX_SHADER))); gl.attachShader(prog,(s=>{gl.shaderSource(s,fs);gl.compileShader(s);return s;})(gl.createShader(gl.FRAGMENT_SHADER))); gl.linkProgram(prog);gl.useProgram(prog); const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW); const attr=gl.getAttribLocation(prog,"p");gl.vertexAttribPointer(attr,2,gl.FLOAT,false,0,0);gl.enableVertexAttribArray(attr);gl.drawArrays(gl.TRIANGLE_STRIP,0,4); const p=new Uint8Array(gl.drawingBufferWidth*gl.drawingBufferHeight*4); gl.readPixels(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight,gl.RGBA,gl.UNSIGNED_BYTE,p);
+                    hashEl.textContent = Detections.simpleHash(p.join(','));
+                } catch(e) { UI.handleError(hashEl,e); }
             },
             
-            runNetwork: async () => {
-                const id = 'network';
-                const ip4El = UI.displayInfo(id, 'Public IPv4', '...loading...');
-                const ip6El = UI.displayInfo(id, 'Public IPv6', '...loading...');
-                try { const r = await fetch('https://api.ipify.org?format=json'); ip4El.textContent = (await r.json()).ip; } catch(e){ ip4El.textContent = "Unavailable"; }
-                try { const r = await fetch('https://api64.ipify.org?format=json'); ip6El.textContent = (await r.json()).ip; } catch(e){ ip6El.textContent = "Unavailable"; }
-            },
-
-            runWebRTC: async () => {
-                const id = 'webrtc';
-                const el = UI.displayInfo(id, 'Local IP', '...loading...');
-                const RTCPeerConnection = window.RTCPeerConnection;
-                if (!RTCPeerConnection) { el.textContent = 'Unsupported'; return; }
-                try {
-                    const pc = new RTCPeerConnection({ iceServers: [] });
-                    pc.createDataChannel('');
-                    pc.onicecandidate = e => { if (!e || !e.candidate || !e.candidate.candidate) return; const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(e.candidate.candidate)?.[1]; if (ip) { el.textContent = ip; pc.close(); }};
-                    await pc.createOffer().then(o => pc.setLocalDescription(o));
-                } catch(e){ el.textContent = "Error"; }
-            },
-
-            runCanvas: async () => {
-                const id = 'canvas';
-                const el = UI.displayInfo(id, '2D Render Hash', '...loading...');
-                try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 200; canvas.height = 60;
-                    const ctx = canvas.getContext('2d');
-                    ctx.textBaseline = "alphabetic";
-                    ctx.fillStyle = "#f60"; ctx.fillRect(125,1,62,20);
-                    ctx.fillStyle = "#069"; ctx.font = "11pt 'Arial'"; ctx.fillText("Cwm fjordbank glyphs vext quiz, 😃", 2, 15);
-                    ctx.fillStyle = "rgba(102, 204, 0, 0.7)"; ctx.font = "18pt 'Times New Roman'"; ctx.fillText("Cwm fjordbank glyphs vext quiz, 😃", 4, 45);
-                    ctx.globalCompositeOperation = "multiply";
-                    ctx.fillStyle = "rgb(255,0,255)"; ctx.beginPath(); ctx.arc(75, 25, 20, 0, Math.PI * 2, true); ctx.closePath(); ctx.fill();
-                    el.textContent = Detections.simpleHash(canvas.toDataURL());
-                } catch(e) { el.textContent = "Error"; }
-            },
-
-            runWebGL: async () => {
-                const id = 'webgl';
-                const hashEl = UI.displayInfo(id, '3D Render Hash', '...loading...');
-                try {
-                    const canvas = document.createElement('canvas');
-                    const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-                    if (!gl) { UI.displayInfo(id, 'WebGL', false); return; }
-                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-                    UI.displayInfo(id, 'Vendor', dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'N/A');
-                    UI.displayInfo(id, 'Renderer', dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'N/A');
-                    
-                    const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
-                    const fs = `void main(){gl_FragColor=vec4(1,0,1,1);}`;
-                    const prog = gl.createProgram(); gl.attachShader(prog, (s => { gl.shaderSource(s, vs); gl.compileShader(s); return s })(gl.createShader(gl.VERTEX_SHADER))); gl.attachShader(prog, (s => { gl.shaderSource(s, fs); gl.compileShader(s); return s })(gl.createShader(gl.FRAGMENT_SHADER))); gl.linkProgram(prog); gl.useProgram(prog);
-                    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-                    const attr = gl.getAttribLocation(prog, "p"); gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0); gl.enableVertexAttribArray(attr);
-                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-                    const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-                    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-                    hashEl.textContent = Detections.simpleHash(pixels.join(','));
-
-                    const extEl = document.querySelector(`#${id}-extra`);
-                    extEl.className = 'list-value';
-                    extEl.innerHTML = `<div><strong>Supported Extensions:</strong></div>` + (gl.getSupportedExtensions().map(e => `<div>${e}</div>`).join('') || '<div>None</div>');
-                } catch(e) { hashEl.textContent = "Error"; console.error(e); }
-            },
+            runFonts:    async () => { const id='fonts'; const el=UI.displayInfo(id, 'Detected Fonts', '...loading...'); const fontListEl=document.querySelector(`#${id}-extra`); fontListEl.className='list-value'; const fonts=["Arial","Arial Black","Calibri","Cambria","Comic Sans MS","Consolas","Courier New","Georgia","Impact","Lucida Console","Lucida Sans Unicode","Microsoft Sans Serif","Palatino Linotype","Segoe UI","Tahoma","Times New Roman","Trebuchet MS","Verdana","Avenir","Helvetica","Menlo","Monaco","Roboto","Noto"]; try { await new Promise(res=>setTimeout(res,50)); const bf=['monospace','sans-serif','serif'], s=document.createElement("span");s.innerHTML="mmmmmmmmmmlli";s.style.fontSize='72px'; const dW={};bf.forEach(f=>{s.style.fontFamily=f;document.body.appendChild(s);dW[f]=s.offsetWidth;document.body.removeChild(s);}); const fF=fonts.filter(f=>bf.some(b=>{s.style.fontFamily=`"${f}",${b}`;document.body.appendChild(s);const w=s.offsetWidth;document.body.removeChild(s);return w!==dW[b];})); el.textContent=`${fF.length}/${fonts.length}`; fontListEl.innerHTML=fF.map(f=>`<div>${f}</div>`).join('')||'<div>No unique fonts detected.</div>';}catch(e){UI.handleError(el,e);}},
+            runAudio:    async () => { const id='audio'; const el=UI.displayInfo(id, 'Context Hash', '...loading...'); if(!window.OfflineAudioContext&&!window.webkitOfflineAudioContext){el.innerHTML=`<span class="status unsupported">Unsupported</span>`;return;} try { const actx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100),o=actx.createOscillator(),c=actx.createDynamicsCompressor();o.connect(c);c.connect(actx.destination);o.start(0);const b=await actx.startRendering(); el.textContent=Detections.simpleHash(b.getChannelData(0).slice(4500,5000).join(','));} catch(e){UI.handleError(el,e);}},
+            runLocale:   () => { try{ const id='locale'; UI.displayInfo(id, 'Number Format', new Intl.NumberFormat().format(123456.789)); UI.displayInfo(id, 'Date Format', new Intl.DateTimeFormat().format(new Date())); } catch(e){ console.error("Locale detection failed", e); }},
             
-            runFonts: async () => {
-                const id = 'fonts';
-                const el = UI.displayInfo(id, 'Detected Fonts', '...loading...');
-                const fontListEl = document.querySelector(`#${id}-extra`);
-                fontListEl.className = 'list-value';
-                
-                const fonts = ["Arial","Arial Black","Bahnschrift","Calibri","Cambria","Cambria Math","Candara","Comic Sans MS","Consolas","Constantia","Corbel","Courier New","Ebrima","Franklin Gothic Medium","Gabriola","Gadugi","Georgia","Impact","Ink Free","Javanese Text","Leelawadee UI","Lucida Console","Lucida Sans Unicode","Malgun Gothic","Marlett","Microsoft Himalaya","Microsoft JhengHei","Microsoft New Tai Lue","Microsoft PhagsPa","Microsoft Sans Serif","Microsoft Tai Le","Microsoft YaHei","Microsoft Yi Baiti","MingLiU-ExtB","Mongolian Baiti","MS Gothic","MV Boli","Myanmar Text","Nirmala UI","Palatino Linotype","Segoe Print","Segoe Script","Segoe UI","Segoe UI Historic","Segoe UI Emoji","Segoe UI Symbol","SimSun","Sitka","Sylfaen","Symbol","Tahoma","Times New Roman","Trebuchet MS","Verdana","Webdings","Wingdings","Yu Gothic", "American Typewriter", "Andale Mono", "Apple Chancery", "AppleGothic", "Avenir", "Avenir Next", "Baskerville", "Big Caslon", "Bodoni 72", "Bradley Hand", "Brush Script MT", "Chalkboard", "Chalkduster", "Charter", "Cochin", "Copperplate", "Courier", "Didot", "Futura", "Geneva", "Gill Sans", "Helvetica", "Helvetica Neue", "Herculanum", "Hoefler Text", "Iowan Old Style", "Lucida Grande", "Luminari", "Marker Felt", "Menlo", "Monaco", "Noteworthy", "Optima", "Palatino", "Papyrus", "Phosphate", "Rockwell", "Savoye LET", "Seravek", "SignPainter", "Skia", "Snell Roundhand", "Times", "Trattatello", "Zapfino", "Cantarell", "Carlito", "Droid Sans", "Liberation Sans", "Noto Sans", "Ubuntu"];
-                
-                await new Promise(res => setTimeout(res, 50)); // Allow UI to update
-                try {
-                    const baseFonts = ['monospace', 'sans-serif', 'serif'];
-                    const s = document.createElement("span"); s.innerHTML = "mmmmmmmmmmlli"; s.style.fontSize = '72px';
-                    const defaultWidths = {}; baseFonts.forEach(f => { s.style.fontFamily = f; document.body.appendChild(s); defaultWidths[f] = s.offsetWidth; document.body.removeChild(s); });
-                    const foundFonts = fonts.filter(f => baseFonts.some(bf => { s.style.fontFamily = `"${f}",${bf}`; document.body.appendChild(s); const w = s.offsetWidth; document.body.removeChild(s); return w !== defaultWidths[bf]; }));
-                    
-                    el.textContent = `${foundFonts.length} / ${fonts.length}`;
-                    fontListEl.innerHTML = foundFonts.map(f => `<div>${f}</div>`).join('') || '<div>No unique fonts detected.</div>';
-                } catch(e){ el.textContent = "Error"; }
-            },
-
-            runAudio: async () => {
-                const id = 'audio';
-                const el = UI.displayInfo(id, 'Context Hash', '...loading...');
-                try {
-                    const actx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,44100,44100);
-                    const o=actx.createOscillator(), c=actx.createDynamicsCompressor();
-                    o.connect(c); c.connect(actx.destination); o.start(0);
-                    const buffer = await actx.startRendering();
-                    el.textContent = Detections.simpleHash(buffer.getChannelData(0).slice(4500,5000).join(','));
-                } catch(e){ el.textContent = 'Unsupported'; }
-            },
-            
-            runLocale: () => {
-                const id = 'locale';
-                try {
-                    UI.displayInfo(id, 'Number Format', new Intl.NumberFormat().format(123456.789));
-                    UI.displayInfo(id, 'Date Format', new Intl.DateTimeFormat().format(new Date()));
-                    UI.displayInfo(id, 'Relative Time', new Intl.RelativeTimeFormat().format(-1, 'day'));
-                    UI.displayInfo(id, 'List Format', 'ListFormat' in Intl ? new Intl.ListFormat().format(['a','b','c']) : 'N/A');
-                } catch(e){}
-            },
-
             runPermissions: async () => {
-                const id = 'permissions';
-                const perms = ['geolocation', 'notifications', 'camera', 'microphone', 'clipboard-read', 'clipboard-write', 'persistent-storage', 'midi'];
-                if (navigator.storage && navigator.storage.estimate) { navigator.storage.estimate().then(e => UI.displayInfo(id, 'Storage Usage', `${(e.usage/1e6).toFixed(2)}/${(e.quota/1e6).toFixed(2)} MB`)); }
-                
+                const id='permissions'; if(!navigator.permissions) { UI.displayInfo(id, 'Permissions API', 'Unsupported'); return; }
+                const perms=['geolocation','notifications','camera','microphone','clipboard-read','persistent-storage'];
+                if(navigator.storage&&navigator.storage.estimate){navigator.storage.estimate().then(e=>UI.displayInfo(id,'Storage Usage',`${(e.usage/1e6).toFixed(2)}/${(e.quota/1e6).toFixed(2)} MB`));}
                 for(const p of perms) {
                     try {
-                        const status = await navigator.permissions.query({ name: p });
-                        const el = UI.displayInfo(id, p, '');
-                        el.innerHTML = `<div class="permission-row"><span class="status ${status.state}">${status.state}</span><button class="button permission-request-btn" data-perm="${p}">Request</button></div>`;
-                        el.querySelector('button').addEventListener('click', async (e) => {
-                            const btn = e.target;
-                            let newStatus;
-                            try {
-                                if (p === 'geolocation') { await new Promise((res,rej) => navigator.geolocation.getCurrentPosition(res,rej,{timeout:1})); }
-                                else if (p === 'notifications') { await Notification.requestPermission(); }
-                                else if (p === 'camera' || p === 'microphone') { const s = await navigator.mediaDevices.getUserMedia({[p.substring(0,5)]:true}); s.getTracks().forEach(t=>t.stop()); }
-                                newStatus = await navigator.permissions.query({ name: p });
-                            } catch(err){ newStatus = await navigator.permissions.query({ name: p }); } // Update status even on deny
-                            btn.parentElement.querySelector('.status').textContent = newStatus.state;
-                            btn.parentElement.querySelector('.status').className = `status ${newStatus.state}`;
-                        });
-                    } catch(e) { UI.displayInfo(id, p, 'Unsupported'); }
+                        const s=await navigator.permissions.query({name:p});
+                        const el=UI.displayInfo(id,p,'');
+                        const updateStatus=(status, btn)=> { el.querySelector('.status').textContent=status.state; el.querySelector('.status').className=`status ${status.state}`; if(status.state==='denied') btn.disabled=true; };
+                        el.innerHTML=`<div class="permission-row"><span class="status ${s.state}">${s.state}</span><button class="button permission-request-btn" data-perm="${p}">Request</button></div>`;
+                        const btn=el.querySelector('button'); if(s.state==='denied') btn.disabled=true;
+                        btn.addEventListener('click', async()=>{ try{ if(p==='geolocation'){await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:100}));} else if(p==='notifications'){await Notification.requestPermission();} else if(p==='camera'||p==='microphone'){const str=await navigator.mediaDevices.getUserMedia({[p.substring(0,5)]:true});str.getTracks().forEach(t=>t.stop());} updateStatus(await navigator.permissions.query({name:p}),btn); } catch(err) { updateStatus(await navigator.permissions.query({name:p}),btn); }});
+                    } catch(e){ UI.displayInfo(id,p,'Unsupported'); }
                 }
             },
             
-            runMedia: async () => {
-                const id = 'media';
-                const card = document.querySelector('#media-card');
-                card.querySelector('.info-grid').remove();
-                card.querySelector(`#${id}-extra`).innerHTML = `<button id="media-button" class="button">Request Mic & Camera Access</button><div id="media-status">Click to scan for devices.</div><div id="media-list" class="list-value"></div>`;
-                card.querySelector('#media-button').addEventListener('click', async (e) => {
-                    UI.createRipple(e);
-                    const statusEl = document.getElementById('media-status'), listEl = document.getElementById('media-list');
-                    statusEl.textContent = 'Requesting...'; listEl.innerHTML = '';
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                        const devices = await navigator.mediaDevices.enumerateDevices();
-                        statusEl.textContent = 'Input Devices Found:';
-                        devices.filter(d=>d.kind!=='audiooutput' && d.deviceId).forEach(d => { listEl.innerHTML += `<div>[${d.kind.replace('input','').toUpperCase()}] ${d.label || 'no label'}</div>`; });
-                        stream.getTracks().forEach(t => t.stop());
-                    } catch (err) { statusEl.textContent = `Error: ${err.name}`; }
-                });
-            }
+            runMedia:    async () => { const id='media'; const card=document.querySelector('#media-card'); card.querySelector('.info-grid').remove(); card.querySelector(`#${id}-extra`).innerHTML=`<button id="media-button" class="button">Request Mic & Camera Access</button><div id="media-status">Click to scan devices.</div><div id="media-list" class="list-value"></div>`; card.querySelector('#media-button').addEventListener('click', async(e)=>{UI.createRipple(e);const sEl=document.getElementById('media-status'), lEl=document.getElementById('media-list');sEl.textContent='Requesting...';lEl.innerHTML='';if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){sEl.textContent='MediaDevices API Unsupported';return;}try{const s=await navigator.mediaDevices.getUserMedia({audio:true,video:true}),d=await navigator.mediaDevices.enumerateDevices();sEl.textContent='Input Devices:';d.filter(dev=>dev.kind!=='audiooutput'&&dev.deviceId).forEach(dev=>{lEl.innerHTML+=`<div>[${dev.kind.replace('input','').toUpperCase()}] ${dev.label||'no label'}</div>`;});s.getTracks().forEach(t=>t.stop());}catch(err){sEl.textContent=`Error: ${err.name}`;}}); }
         };
 
-        // --- FINAL SETUP AND INITIALIZATION ---
         const init = () => {
-            UI.init();
-            Detections.runAll();
-            
-            // Setup Search
-            const searchInput = document.getElementById('search-input');
-            const allCards = document.querySelectorAll('.card');
-            const noResultsEl = document.getElementById('no-results');
-            searchInput.addEventListener('input', () => {
-                const term = searchInput.value.toLowerCase();
-                let visibleCount = 0;
-                allCards.forEach(card => {
-                    const content = card.innerText.toLowerCase();
-                    if (content.includes(term)) { card.classList.remove('hidden'); visibleCount++; } 
-                    else { card.classList.add('hidden'); }
-                });
-                noResultsEl.style.display = visibleCount === 0 ? 'block' : 'none';
-            });
-            
-            // Setup Copy Button
+            UI.init(); Detections.runAll();
+            const searchInput=document.getElementById('search-input'), allCards=document.querySelectorAll('.card'), noResultsEl=document.getElementById('no-results');
+            searchInput.addEventListener('input',()=>{const term=searchInput.value.toLowerCase();let v=0;allCards.forEach(c=>{const txt=c.innerText.toLowerCase();if(txt.includes(term)){c.classList.remove('hidden');v++;}else{c.classList.add('hidden');}});noResultsEl.style.display=v===0?'block':'none';});
             document.getElementById('copy-button').addEventListener('click', async (e) => {
-                UI.createRipple(e);
-                let report = '--- Ultimate Browser Fingerprint Report ---\n\n';
-                document.querySelectorAll('.card:not(.hidden)').forEach(card => {
-                    report += `--- ${card.querySelector('h2').textContent.trim()} ---\n`;
-                    card.querySelectorAll('.info-grid .key').forEach((keyEl, i) => {
-                        const valEl = card.querySelectorAll('.value')[i];
-                        if (valEl) report += `${keyEl.textContent}: ${valEl.textContent}\n`;
-                    });
-                    const extra = card.querySelector('.list-value');
-                    if(extra && extra.innerText) report += extra.innerText + '\n';
-                    report += '\n';
-                });
-                try {
-                    await navigator.clipboard.writeText(report);
-                    const btn = e.currentTarget;
-                    btn.textContent = 'Copied!'; btn.classList.add('success');
-                    setTimeout(() => { btn.textContent = 'Copy Full Report'; btn.classList.remove('success'); }, 2000);
-                } catch (err) { alert('Failed to copy.'); }
+                UI.createRipple(e); let report='--- Ultimate Browser Fingerprint Report ---\n\n'; document.querySelectorAll('.card:not(.hidden)').forEach(c=>{report+=`--- ${c.querySelector('h2').textContent.trim()} ---\n`;c.querySelectorAll('.info-grid .key').forEach((k,i)=>{const v=c.querySelectorAll('.value')[i];if(v)report+=`${k.textContent}: ${v.textContent}\n`;});const extra=c.querySelector('.list-value');if(extra&&extra.innerText)report+=extra.innerText+'\n';report+='\n';});
+                try { await navigator.clipboard.writeText(report); const btn=e.currentTarget; btn.textContent='Copied!';btn.classList.add('success');setTimeout(()=>{btn.textContent='Copy Full Report';btn.classList.remove('success');},2000);}catch(err){alert('Failed to copy.');}
             });
         };
-
         init();
     });
     </script>
