@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Material RGB Color Picker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>RGB Color Picker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
+      font-family: "Roboto", sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -24,20 +25,19 @@
     h1 {
       font-size: 2rem;
       margin-bottom: 1rem;
-      text-align: center;
     }
 
     .container {
       width: 100%;
-      max-width: 450px;
+      max-width: 460px;
       background: white;
       border-radius: 20px;
-      padding: 2rem 1.5rem;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
     }
 
     .slider-group {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .label-row {
@@ -55,7 +55,6 @@
       background: #ccc;
       outline: none;
       transition: background 0.3s;
-      position: relative;
     }
 
     input[type="range"]::-webkit-slider-thumb {
@@ -68,7 +67,7 @@
       border-radius: 50%;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      transition: transform 0.2s ease, border-color 0.3s;
+      transition: transform 0.2s ease;
     }
 
     input[type="range"]:active::-webkit-slider-thumb {
@@ -79,46 +78,71 @@
     .preview-box {
       height: 140px;
       border-radius: 16px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-      margin-bottom: 1.5rem;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      margin-bottom: 1.2rem;
       transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
 
     .output {
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-bottom: 1rem;
     }
 
     .copy-btn {
-      padding: 10px 20px;
-      background: #4caf50;
+      padding: 12px 20px;
+      background: #1976d2;
       color: white;
       border: none;
       border-radius: 25px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       position: relative;
       overflow: hidden;
+      transition: background 0.3s, transform 0.2s;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .copy-btn::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+      animation: none;
+    }
+
+    .copy-btn:focus:not(:active)::after {
+      animation: none;
     }
 
     .copy-btn:active::after {
-      content: '';
-      position: absolute;
-      background: rgba(255,255,255,0.4);
-      width: 100px;
-      height: 100px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      border-radius: 50%;
-      animation: ripple 0.6s ease-out;
+      top: var(--y);
+      left: var(--x);
+      transform: scale(0);
+      opacity: 1;
+      animation: ripple 0.5s ease-out;
     }
 
     @keyframes ripple {
       to {
-        transform: translate(-50%, -50%) scale(2.5);
+        transform: scale(2.5);
         opacity: 0;
       }
     }
@@ -128,7 +152,7 @@
         padding: 1rem;
       }
       .container {
-        padding: 1.2rem;
+        padding: 1.3rem;
       }
     }
   </style>
@@ -158,14 +182,14 @@
       <input type="range" id="b" min="0" max="255" value="0" />
     </div>
 
-    <div class="preview-box" id="colorBox"></div>
+    <div class="preview-box" id="colorBox">#000000</div>
 
     <div class="output">
       <div><strong>RGB:</strong> <span id="rgbVal">rgb(0, 0, 0)</span></div>
       <div><strong>HEX:</strong> <span id="hexVal">#000000</span></div>
     </div>
 
-    <button class="copy-btn" onclick="copyColor()">📋 Copy HEX</button>
+    <button class="copy-btn" id="copyBtn">📋 Copy HEX</button>
   </div>
 
   <script>
@@ -184,9 +208,15 @@
     const colorBox = document.getElementById('colorBox');
     const rgbText = document.getElementById('rgbVal');
     const hexText = document.getElementById('hexVal');
+    const copyBtn = document.getElementById('copyBtn');
 
     function toHex(value) {
       return value.toString(16).padStart(2, '0');
+    }
+
+    function getContrastColor(r, g, b) {
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 125 ? '#000' : '#fff';
     }
 
     function updateColor() {
@@ -197,35 +227,49 @@
       const rgb = `rgb(${r}, ${g}, ${b})`;
       const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
-      colorBox.style.backgroundColor = rgb;
-      rgbText.textContent = rgb;
-      hexText.textContent = hex;
-
       labels.r.textContent = r;
       labels.g.textContent = g;
       labels.b.textContent = b;
 
-      setTrack(sliders.r, `rgb(255, 0, 0)`);
-      setTrack(sliders.g, `rgb(0, 255, 0)`);
-      setTrack(sliders.b, `rgb(0, 0, 255)`);
+      rgbText.textContent = rgb;
+      hexText.textContent = hex;
+      colorBox.textContent = hex;
+      colorBox.style.backgroundColor = rgb;
+      colorBox.style.color = getContrastColor(r, g, b);
+
+      setTrack(sliders.r, 'rgb(255,0,0)');
+      setTrack(sliders.g, 'rgb(0,255,0)');
+      setTrack(sliders.b, 'rgb(0,0,255)');
     }
 
     function setTrack(slider, color) {
       const value = (slider.value / 255) * 100;
-      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${value}%, #ddd ${value}%, #ddd 100%)`;
-    }
-
-    function copyColor() {
-      const hex = hexText.textContent;
-      navigator.clipboard.writeText(hex).then(() => {
-        alert(`Copied ${hex} to clipboard!`);
-      });
+      slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${value}%, #ddd ${value}%)`;
     }
 
     Object.values(sliders).forEach(slider => {
       slider.addEventListener('input', updateColor);
     });
 
+    copyBtn.addEventListener('click', function (e) {
+      const hex = hexText.textContent;
+      navigator.clipboard.writeText(hex);
+      alert(`Copied ${hex} to clipboard!`);
+    });
+
+    // Custom ripple coordinates
+    copyBtn.addEventListener("touchstart", rippleCoords);
+    copyBtn.addEventListener("mousedown", rippleCoords);
+
+    function rippleCoords(e) {
+      const rect = this.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      this.style.setProperty("--x", `${y}px`);
+      this.style.setProperty("--y", `${x}px`);
+    }
+
+    // Initialize
     updateColor();
   </script>
 </body>
