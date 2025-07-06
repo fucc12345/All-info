@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser & System Fingerprint</title>
+    <title>Advanced Browser Fingerprint</title>
     <style>
-        /* Modern Font & Base Styling */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
         :root {
             --primary-color: #4285F4;
             --background-color: #f0f2f5;
@@ -20,7 +18,6 @@
             --success-color: #34A853;
             --error-color: #EA4335;
         }
-
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--background-color);
@@ -29,458 +26,336 @@
             padding: 20px;
             line-height: 1.6;
         }
-
-        /* Main Container & Header */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            font-weight: 500;
-            font-size: 2.5rem;
-            color: var(--primary-color);
-        }
-
-        header p {
-            font-size: 1.1rem;
-            color: var(--key-color);
-        }
-
-        /* Grid Layout for Cards */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 25px;
-        }
-
-        /* Card Styling */
-        .card {
-            background: var(--card-background);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            padding: 25px;
-            transition: transform 0.2s ease-in-out;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card h2 {
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-            font-weight: 500;
-            margin-top: 0;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--primary-color);
-        }
-        
-        .card h2 .icon {
-            margin-right: 12px;
-            width: 24px;
-            height: 24px;
-        }
-        
-        /* Key-Value Pair Styling */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 150px 1fr;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .info-grid .key {
-            font-weight: 500;
-            color: var(--key-color);
-            font-size: 0.9rem;
-        }
-
-        .info-grid .value {
-            font-family: 'Menlo', 'Consolas', monospace;
-            background-color: var(--value-bg-color);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            word-break: break-all;
-            line-height: 1.4;
-        }
-        
-        /* Status Indicators (for booleans) */
-        .status {
-            display: inline-flex;
-            align-items: center;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .status.true {
-            background-color: #e6f4ea;
-            color: var(--success-color);
-        }
-        .status.false {
-            background-color: #fce8e6;
-            color: var(--error-color);
-        }
-
-        /* Media Device Button */
-        #media-button {
-            display: block;
-            width: 100%;
-            padding: 12px;
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-weight: 500; font-size: 2.5rem; color: var(--primary-color); }
+        header p { font-size: 1.1rem; color: var(--key-color); }
+        #copy-button {
+            padding: 10px 20px;
             font-size: 1rem;
             font-weight: 500;
-            color: #fff;
-            background-color: var(--primary-color);
-            border: none;
+            color: var(--primary-color);
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            margin-top: 20px;
         }
-
-        #media-button:hover {
-            background-color: #3367D6;
-        }
-
-        #media-list {
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-        #media-list div {
-            padding: 5px;
-            border-bottom: 1px solid var(--border-color);
-        }
-         #media-list div:last-child {
-            border-bottom: none;
-        }
+        #copy-button:hover { background-color: #e8f0fe; }
+        #copy-button.success { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
+        .card { background: var(--card-background); border-radius: 12px; box-shadow: var(--shadow); padding: 25px; transition: transform 0.2s ease-in-out; overflow: hidden; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); }
+        .card h2 { display: flex; align-items: center; font-size: 1.4rem; font-weight: 500; margin-top: 0; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); color: var(--primary-color); }
+        .card h2 .icon { margin-right: 12px; width: 24px; height: 24px; }
+        .info-grid { display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: start; }
+        .info-grid .key { font-weight: 500; color: var(--key-color); font-size: 0.9rem; padding-top: 5px; }
+        .info-grid .value { font-family: 'Menlo', 'Consolas', monospace; background-color: var(--value-bg-color); padding: 5px 10px; border-radius: 6px; font-size: 0.9rem; word-break: break-all; line-height: 1.4; }
+        .status { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 500; }
+        .status.true { background-color: #e6f4ea; color: var(--success-color); }
+        .status.false { background-color: #fce8e6; color: var(--error-color); }
+        #media-button { display: block; width: 100%; padding: 12px; font-size: 1rem; font-weight: 500; color: #fff; background-color: var(--primary-color); border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; margin-bottom: 15px; }
+        #media-button:hover { background-color: #3367D6; }
+        #media-list, #font-list { margin-top: 15px; font-size: 0.9rem; }
+        #font-list .font-item { display: inline-block; background: var(--value-bg-color); padding: 2px 8px; border-radius: 4px; margin: 2px; font-family: monospace; }
+        #font-list .font-item.found { background-color: #e6f4ea; color: var(--success-color); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>Browser & System Fingerprint</h1>
+            <h1>Advanced Browser Fingerprint</h1>
             <p>A comprehensive, real-time report of all detectable information from your browser.</p>
+            <button id="copy-button">Copy Full Report</button>
         </header>
 
         <div class="grid-container">
-            <!-- Navigator Info -->
-            <div class="card" id="navigator-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/></svg>
-                    Navigator
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- Network & IP -->
-            <div class="card" id="network-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-2.29.86-4.38 2.25-5.94L16.94 18.25C15.38 19.64 13.29 20.5 11 20.5c-1.8 0-3.48-.56-4.9-1.52L3.5 12zM19.75 18.25L7.06 5.75C8.62 4.36 10.71 3.5 13 3.5c4.69 0 8.5 3.81 8.5 8.5 0 2.29-.86 4.38-2.25 5.94z"/></svg>
-                    Network & IP
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- Display Info -->
-            <div class="card" id="display-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>
-                    Display
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- GPU & Graphics -->
-            <div class="card" id="gpu-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 2L7 4H2v15h20V4h-5l-2-2H9zm8 14H7V8h10v8zm-5-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                    GPU & Graphics
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- Time & Date -->
-            <div class="card" id="time-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    Time & Date
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- Hardware & Battery -->
-            <div class="card" id="hardware-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 .9-2 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/></svg>
-                    Hardware & Battery
-                </h2>
-                <div class="info-grid"></div>
-            </div>
-
-            <!-- Media Devices -->
-            <div class="card" id="media-card">
-                <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                    Media Devices
-                </h2>
-                <button id="media-button">Request Mic & Camera Access</button>
-                <div id="media-status">Click the button to scan for media devices.</div>
-                <div id="media-list"></div>
-            </div>
+            <!-- Cards from previous version -->
+            <div class="card" id="navigator-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/></svg>Navigator</h2><div class="info-grid"></div></div>
+            <div class="card" id="network-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3.5 12c0-2.29.86-4.38 2.25-5.94L16.94 18.25C15.38 19.64 13.29 20.5 11 20.5c-1.8 0-3.48-.56-4.9-1.52L3.5 12zM19.75 18.25L7.06 5.75C8.62 4.36 10.71 3.5 13 3.5c4.69 0 8.5 3.81 8.5 8.5 0 2.29-.86 4.38-2.25 5.94z"/></svg>Network & IP</h2><div class="info-grid"></div></div>
             
-             <!-- Browser Features -->
-            <div class="card" id="features-card">
+            <!-- NEW: Advanced Fingerprinting -->
+            <div class="card" id="fingerprint-card">
                 <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM8 15h3v-5H8v5zm5-3h3V9h-3v3z"/></svg>
-                    Browser Features
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5.67-1.5 1.5S5.67 15 6.5 15s1.5-.67 1.5-1.5S7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z"/></svg>
+                    Advanced Fingerprinting
+                </h2>
+                <div class="info-grid"></div>
+            </div>
+
+            <!-- NEW: WebRTC Leak Test -->
+            <div class="card" id="webrtc-card">
+                <h2>
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-1.66-1.34-3-3-3H3c-1.66 0-3 1.34-3 3v10c0 1.66 1.34 3 3 3h11c1.66 0 3-1.34 3-3v-3.5l4 4v-11l-4 4zM15 18H3V6h11v12z"/></svg>
+                    WebRTC Leak Test
                 </h2>
                 <div class="info-grid"></div>
             </div>
             
-             <!-- Performance -->
-            <div class="card" id="performance-card">
+            <div class="card" id="display-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v2h12v-2l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>Display</h2><div class="info-grid"></div></div>
+            <div class="card" id="gpu-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 2L7 4H2v15h20V4h-5l-2-2H9zm8 14H7V8h10v8zm-5-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>GPU & Graphics</h2><div class="info-grid"></div></div>
+            <div class="card" id="time-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>Time & Date</h2><div class="info-grid"></div></div>
+            <div class="card" id="hardware-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h10c1.1 0 .9-2 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/></svg>Hardware & Battery</h2><div class="info-grid"></div></div>
+            
+            <!-- NEW: Installed Fonts -->
+            <div class="card" id="fonts-card">
                 <h2>
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 15H6v-2h12v2zm0-4H6v-2h12v2zm0-4H6V8h12v2z"/></svg>
-                    Performance
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.93 13.5h4.14L12 7.98zM20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-4.05 16.5-1.14-3H9.17l-1.12 3H5.96l5.11-13h1.86l5.11 13h-2.09z"/></svg>
+                    Installed Fonts
                 </h2>
                 <div class="info-grid"></div>
+                <div id="font-list">Scanning...</div>
             </div>
+
+            <div class="card" id="media-card"><h2><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Media Devices</h2><button id="media-button">Request Mic & Camera Access</button><div id="media-status">Click button to scan for devices.</div><div id="media-list"></div></div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            /**
-             * --- HELPER FUNCTION to display data in cards ---
-             * This function creates the key/value rows and returns a direct reference
-             * to the 'value' element, so it can be updated asynchronously.
-             * @returns {HTMLElement} The element where the value is displayed.
-             */
-            const displayInfo = (cardId, key, value) => {
-                const cardGrid = document.querySelector(`#${cardId} .info-grid`);
-                if (!cardGrid) return null;
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- HELPER FUNCTIONS ---
+        const displayInfo = (cardId, key, value) => {
+            const cardGrid = document.querySelector(`#${cardId} .info-grid`);
+            if (!cardGrid) return null;
+            const keyEl = document.createElement('div'); keyEl.className = 'key'; keyEl.textContent = key;
+            const valueEl = document.createElement('div'); valueEl.className = 'value';
+            if (typeof value === 'boolean') {
+                const s = document.createElement('span'); s.className = `status ${value}`; s.textContent = value ? 'Yes' : 'No'; valueEl.appendChild(s);
+            } else { valueEl.textContent = value === undefined || value === null || value === '' ? 'N/A' : value; }
+            cardGrid.appendChild(keyEl); cardGrid.appendChild(valueEl);
+            return valueEl;
+        };
 
-                const keyEl = document.createElement('div');
-                keyEl.className = 'key';
-                keyEl.textContent = key;
+        const simpleHash = str => {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash &= hash; 
+            }
+            return new Uint32Array([hash])[0].toString(16);
+        };
 
-                const valueEl = document.createElement('div');
-                valueEl.className = 'value';
-                
-                if (typeof value === 'boolean') {
-                    const statusEl = document.createElement('span');
-                    statusEl.className = `status ${value}`;
-                    statusEl.textContent = value ? 'Yes' : 'No';
-                    valueEl.appendChild(statusEl);
-                } else {
-                    valueEl.textContent = value === undefined || value === null || value === '' ? 'N/A' : value;
-                }
-                
-                cardGrid.appendChild(keyEl);
-                cardGrid.appendChild(valueEl);
-                return valueEl; // Return the element for potential async updates
-            };
-            
-            // --- 1. NAVIGATOR INFO ---
-            const getNavigatorInfo = () => {
-                const cardId = 'navigator-card';
-                displayInfo(cardId, 'User Agent', navigator.userAgent);
-                displayInfo(cardId, 'App Name', navigator.appName);
-                displayInfo(cardId, 'Platform', navigator.platform);
-                displayInfo(cardId, 'Vendor', navigator.vendor);
-                displayInfo(cardId, 'Language', navigator.language);
-                displayInfo(cardId, 'Languages', navigator.languages.join(', '));
-                displayInfo(cardId, 'Cookies Enabled', navigator.cookieEnabled);
-                displayInfo(cardId, 'Do Not Track', navigator.doNotTrack || 'Not specified');
-            };
+        // --- DETECTION MODULES ---
+        const getNavigatorInfo = () => {
+            const cardId = 'navigator-card';
+            displayInfo(cardId, 'User Agent', navigator.userAgent);
+            displayInfo(cardId, 'Platform', navigator.platform);
+            displayInfo(cardId, 'Language', navigator.language);
+            displayInfo(cardId, 'Cookies Enabled', navigator.cookieEnabled);
+            displayInfo(cardId, 'Do Not Track', navigator.doNotTrack || 'Not specified');
+            displayInfo(cardId, 'Max Touch Points', navigator.maxTouchPoints || 0);
+        };
 
-            // --- 2. NETWORK & IP INFO ---
-            const getNetworkInfo = () => {
-                const cardId = 'network-card';
-                displayInfo(cardId, 'Online Status', navigator.onLine);
-                
-                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-                if (connection) {
-                    displayInfo(cardId, 'Connection Type', connection.effectiveType);
-                    displayInfo(cardId, 'Downlink (Mbps)', connection.downlink || 'N/A');
-                    displayInfo(cardId, 'Save Data Mode', connection.saveData);
-                }
-                
-                // --- RELIABLE IP FETCHING ---
-                // We create the element with a "Detecting..." placeholder.
-                const ipv4ValueEl = displayInfo(cardId, 'IPv4 Address', 'Detecting...');
-                const ipv6ValueEl = displayInfo(cardId, 'IPv6 Address', 'Detecting...');
-                
-                // Fetch IPv4
-                fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(data => ipv4ValueEl.textContent = data.ip)
-                    .catch(() => ipv4ValueEl.textContent = 'Could not fetch IPv4');
-                
-                // Fetch IPv6
-                fetch('https://api64.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(data => ipv6ValueEl.textContent = data.ip)
-                    .catch(() => ipv6ValueEl.textContent = 'Not available / Error');
-            };
-            
-            // --- 3. DISPLAY INFO ---
-            const getDisplayInfo = () => {
-                const cardId = 'display-card';
-                displayInfo(cardId, 'Screen Resolution', `${screen.width}x${screen.height}`);
-                displayInfo(cardId, 'Available Viewport', `${screen.availWidth}x${screen.availHeight}`);
-                displayInfo(cardId, 'Color Depth', `${screen.colorDepth}-bit`);
-                displayInfo(cardId, 'Orientation', screen.orientation ? screen.orientation.type : 'N/A');
-                displayInfo(cardId, 'Window Inner Size', `${window.innerWidth}x${window.innerHeight}`);
-            };
+        const getNetworkInfo = () => {
+            const cardId = 'network-card';
+            displayInfo(cardId, 'Online Status', navigator.onLine);
+            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (conn) {
+                displayInfo(cardId, 'Connection Type', conn.effectiveType);
+                displayInfo(cardId, 'Downlink (Mbps)', conn.downlink || 'N/A');
+                displayInfo(cardId, 'Save Data Mode', conn.saveData);
+            }
+            const ipv4 = displayInfo(cardId, 'Public IPv4', 'Detecting...');
+            const ipv6 = displayInfo(cardId, 'Public IPv6', 'Detecting...');
+            fetch('https://api.ipify.org?format=json').then(r => r.json()).then(d => ipv4.textContent = d.ip).catch(() => ipv4.textContent = 'Error/Unavailable');
+            fetch('https://api64.ipify.org?format=json').then(r => r.json()).then(d => ipv6.textContent = d.ip).catch(() => ipv6.textContent = 'Error/Unavailable');
+        };
 
-            // --- 4. GPU & GRAPHICS INFO ---
-            const getGpuInfo = () => {
-                const cardId = 'gpu-card';
-                try {
-                    const canvas = document.createElement('canvas');
-                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                    if (gl) {
-                        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                        displayInfo(cardId, 'GPU Vendor', gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));
-                        displayInfo(cardId, 'GPU Renderer', gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
-                    } else {
-                         displayInfo(cardId, 'WebGL Support', false);
-                    }
-                } catch (e) {
-                     displayInfo(cardId, 'GPU Info', 'Could not access WebGL context');
-                }
-            };
-            
-            // --- 5. TIME & DATE INFO ---
-            const getTimeInfo = () => {
-                const cardId = 'time-card';
-                const now = new Date();
-                displayInfo(cardId, 'System Time', now.toLocaleString());
-                displayInfo(cardId, 'Timezone Offset', `GMT${-now.getTimezoneOffset() / 60}`);
-                displayInfo(cardId, 'Timezone (IANA)', Intl.DateTimeFormat().resolvedOptions().timeZone);
-            };
-            
-            // --- 6. HARDWARE & BATTERY INFO ---
-            const getHardwareInfo = () => {
-                const cardId = 'hardware-card';
-                displayInfo(cardId, 'CPU Cores', navigator.hardwareConcurrency || 'N/A');
-                displayInfo(cardId, 'Device Memory (GB)', navigator.deviceMemory ? `${navigator.deviceMemory} (approx.)` : 'N/A');
-                
-                if ('getBattery' in navigator) {
-                    const batteryLevelEl = displayInfo(cardId, 'Battery Level', 'Detecting...');
-                    const batteryStatusEl = displayInfo(cardId, 'Charging', 'Detecting...');
-                    navigator.getBattery().then(battery => {
-                        const updateBatteryInfo = () => {
-                            batteryLevelEl.textContent = `${(battery.level * 100).toFixed(0)}%`;
-                            batteryStatusEl.innerHTML = ''; // Clear old content
-                            const statusSpan = document.createElement('span');
-                            statusSpan.className = `status ${battery.charging}`;
-                            statusSpan.textContent = battery.charging ? 'Yes' : 'No';
-                            batteryStatusEl.appendChild(statusSpan);
-                        };
-                        updateBatteryInfo();
-                        battery.addEventListener('levelchange', updateBatteryInfo);
-                        battery.addEventListener('chargingchange', updateBatteryInfo);
-                    });
-                } else {
-                    displayInfo(cardId, 'Battery API', 'Not supported');
-                }
-            };
-            
-            // --- 7. MEDIA DEVICES ---
-            const setupMediaDevices = () => {
-                const button = document.getElementById('media-button');
-                const statusEl = document.getElementById('media-status');
-                const listEl = document.getElementById('media-list');
+        const getDisplayInfo = () => {
+            const cardId = 'display-card';
+            displayInfo(cardId, 'Screen Resolution', `${screen.width}x${screen.height}`);
+            displayInfo(cardId, 'Available Viewport', `${screen.availWidth}x${screen.availHeight}`);
+            displayInfo(cardId, 'Window Size', `${window.innerWidth}x${window.innerHeight}`);
+            displayInfo(cardId, 'Pixel Ratio', window.devicePixelRatio);
+            displayInfo(cardId, 'Color Depth', `${screen.colorDepth}-bit`);
+            displayInfo(cardId, 'Orientation', screen.orientation ? screen.orientation.type : 'N/A');
+        };
 
-                button.addEventListener('click', async () => {
-                    statusEl.textContent = 'Requesting permissions...';
-                    listEl.innerHTML = '';
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                        statusEl.textContent = 'Permission granted! Devices found:';
-                        const devices = await navigator.mediaDevices.enumerateDevices();
-                        
-                        if (devices.filter(d => d.kind !== 'audiooutput').length === 0) {
-                             listEl.innerHTML = '<div>No input devices found.</div>';
-                        } else {
-                            devices.forEach(device => {
-                                if (device.kind === 'audiooutput') return; // Skip speakers
-                                const deviceEl = document.createElement('div');
-                                deviceEl.textContent = `[${device.kind.replace('input', '')}] ${device.label || `Device (no label)`}`;
-                                listEl.appendChild(deviceEl);
-                            });
-                        }
-                        stream.getTracks().forEach(track => track.stop()); // Turn off camera/mic light
-                    } catch (err) {
-                        if (err.name === 'NotAllowedError') {
-                            statusEl.textContent = 'Error: Permission denied by user.';
-                        } else if (err.name === 'NotFoundError') {
-                            statusEl.textContent = 'Error: No camera or microphone found.';
-                        } else {
-                            statusEl.textContent = `Error: ${err.name}`;
-                        }
+        const getGpuInfo = () => {
+            const cardId = 'gpu-card';
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                displayInfo(cardId, 'GPU Vendor', gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+                displayInfo(cardId, 'GPU Renderer', gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+            } catch (e) {
+                displayInfo(cardId, 'GPU Info', 'Could not access WebGL context');
+            }
+        };
+
+        const getFingerprints = async () => {
+            const cardId = 'fingerprint-card';
+            // Canvas Fingerprint
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const txt = 'BrowserLeaks,com <canvas> 1.0';
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.textBaseline = "alphabetic";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = "#069";
+                ctx.fillText(txt, 2, 15);
+                const dataUrl = canvas.toDataURL();
+                displayInfo(cardId, 'Canvas Fingerprint', simpleHash(dataUrl));
+            } catch (e) {
+                displayInfo(cardId, 'Canvas Fingerprint', 'Error');
+            }
+
+            // Audio Fingerprint
+            const audioEl = displayInfo(cardId, 'Audio Fingerprint', 'Processing...');
+            try {
+                const audioCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
+                const oscillator = audioCtx.createOscillator();
+                oscillator.type = "triangle";
+                oscillator.frequency.setValueAtTime(10000, audioCtx.currentTime);
+                const compressor = audioCtx.createDynamicsCompressor();
+                // Configure compressor
+                [[ 'threshold', -50 ], [ 'knee', 40 ], [ 'ratio', 12 ], [ 'reduction', -20 ], [ 'attack', 0 ], [ 'release', .25 ]].forEach(item => {
+                    if (compressor[item[0]] !== undefined && typeof compressor[item[0]].setValueAtTime === 'function') {
+                        compressor[item[0]].setValueAtTime(item[1], audioCtx.currentTime);
                     }
                 });
-            };
+                oscillator.connect(compressor);
+                compressor.connect(audioCtx.destination);
+                oscillator.start(0);
+                const buffer = await audioCtx.startRendering();
+                const result = buffer.getChannelData(0).slice(4500, 5000).reduce((acc, val) => acc + Math.abs(val), 0).toString();
+                audioEl.textContent = simpleHash(result);
+            } catch (e) {
+                audioEl.textContent = 'Not Supported / Error';
+            }
+        };
 
-            // --- 8. BROWSER FEATURES ---
-            const getBrowserFeatures = () => {
-                const cardId = 'features-card';
-                const features = {
-                    'Geolocation': 'geolocation' in navigator,
-                    'Web Sockets': 'WebSocket' in window,
-                    'Local Storage': 'localStorage' in window,
-                    'Service Workers': 'serviceWorker' in navigator,
-                    'WebRTC': 'RTCPeerConnection' in window,
-                    'Gamepad API': 'getGamepads' in navigator
-                };
-                for (const [feature, isSupported] of Object.entries(features)) {
-                    displayInfo(cardId, feature, isSupported);
+        const getWebRTCLeak = () => {
+            const el = displayInfo('webrtc-card', 'Local IP Address', 'Testing...');
+            const RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+            if (!RTCPeerConnection) { el.textContent = "WebRTC not supported"; return; }
+            const pc = new RTCPeerConnection({ iceServers: [] });
+            pc.createDataChannel('');
+            pc.createOffer().then(offer => pc.setLocalDescription(offer));
+            pc.onicecandidate = (event) => {
+                if (event && event.candidate && event.candidate.candidate) {
+                    const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(event.candidate.candidate)[1];
+                    if (ip.indexOf("192.168") === 0 || ip.indexOf("10.") === 0 || ip.indexOf("172.16.") === 0) {
+                        el.textContent = ip;
+                        pc.onicecandidate = null;
+                    }
                 }
             };
-            
-            // --- 9. PERFORMANCE INFO ---
-            const getPerformanceInfo = () => {
-                const cardId = 'performance-card';
-                if (performance?.timing) {
-                    const t = performance.timing;
-                    displayInfo(cardId, 'TTFB', `${t.responseStart - t.requestStart}ms`);
-                    displayInfo(cardId, 'DOM Interactive', `${t.domInteractive - t.navigationStart}ms`);
-                    displayInfo(cardId, 'Page Load Time', `${t.loadEventEnd - t.navigationStart}ms`);
-                } else {
-                    displayInfo(cardId, 'Performance API', 'Legacy Timing Not Supported');
+            setTimeout(() => { if (el.textContent.includes('Testing')) el.textContent = "No leak detected"; }, 1000);
+        };
+        
+        const getFontList = () => {
+            const fontListEl = document.getElementById('font-list');
+            const fontsToTest = ['Arial', 'Verdana', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia', 'Palatino', 'Garamond', 'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Impact', 'Calibri', 'Cambria', 'Consolas', 'Menlo', 'Monaco', 'Lucida Console', 'Fira Code', 'SF Pro Text', 'Roboto'];
+            const baseFonts = ['monospace', 'sans-serif', 'serif'];
+            const testString = "mmmmmmmmmmlli";
+            const testSize = '72px';
+            const h = document.getElementsByTagName("body")[0];
+            const s = document.createElement("span");
+            s.style.fontSize = testSize; s.innerHTML = testString;
+            const defaultWidth = {};
+            for (const font of baseFonts) {
+                s.style.fontFamily = font; h.appendChild(s);
+                defaultWidth[font] = s.offsetWidth; h.removeChild(s);
+            }
+            const foundFonts = fontsToTest.filter(font => {
+                let detected = false;
+                for (const baseFont of baseFonts) {
+                    s.style.fontFamily = `"${font}",${baseFont}`; h.appendChild(s);
+                    if (s.offsetWidth !== defaultWidth[baseFont]) { detected = true; }
+                    h.removeChild(s);
+                    if (detected) return true;
                 }
-            };
+                return false;
+            });
+            fontListEl.innerHTML = '';
+            if (foundFonts.length > 0) {
+                foundFonts.forEach(font => {
+                    const fontEl = document.createElement('span'); fontEl.className = 'font-item found'; fontEl.textContent = font;
+                    fontListEl.appendChild(fontEl);
+                });
+            } else {
+                fontListEl.textContent = "No common fonts detected from the list.";
+            }
+            displayInfo('fonts-card', 'Detected Fonts', `${foundFonts.length} / ${fontsToTest.length}`);
+        };
 
-            // --- RUN ALL DETECTION FUNCTIONS ---
-            getNavigatorInfo();
-            getNetworkInfo();
-            getDisplayInfo();
-            getGpuInfo();
-            getTimeInfo();
-            getHardwareInfo();
-            setupMediaDevices();
-            getBrowserFeatures();
-            getPerformanceInfo();
+        const setupCopyButton = () => {
+            const button = document.getElementById('copy-button');
+            button.addEventListener('click', async () => {
+                let report = '--- Advanced Browser Fingerprint Report ---\n\n';
+                document.querySelectorAll('.card').forEach(card => {
+                    const title = card.querySelector('h2').textContent.trim();
+                    report += `--- ${title} ---\n`;
+                    card.querySelectorAll('.info-grid .key').forEach((keyEl, index) => {
+                        const valueEl = card.querySelectorAll('.info-grid .value')[index];
+                        report += `${keyEl.textContent}: ${valueEl.textContent}\n`;
+                    });
+                    if (card.id === 'media-card' && card.querySelector('#media-list').innerHTML) {
+                        report += card.querySelector('#media-list').innerText;
+                    }
+                    if (card.id === 'fonts-card' && card.querySelector('#font-list').innerHTML) {
+                        report += "Installed Fonts: " + [...card.querySelectorAll('.font-item.found')].map(f => f.textContent).join(', ') + '\n';
+                    }
+                    report += '\n';
+                });
+
+                try {
+                    await navigator.clipboard.writeText(report);
+                    button.textContent = 'Copied!';
+                    button.classList.add('success');
+                    setTimeout(() => {
+                        button.textContent = 'Copy Full Report';
+                        button.classList.remove('success');
+                    }, 2000);
+                } catch (err) {
+                    button.textContent = 'Copy Failed!';
+                }
+            });
+        };
+
+        // --- RUN ALL DETECTION FUNCTIONS ---
+        // Basic Info (Fast)
+        getNavigatorInfo();
+        getNetworkInfo();
+        getDisplayInfo();
+        getGpuInfo();
+        getWebRTCLeak();
+        displayInfo('time-card', 'System Time', new Date().toLocaleString());
+        displayInfo('time-card', 'Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
+        displayInfo('hardware-card', 'CPU Cores', navigator.hardwareConcurrency || 'N/A');
+        displayInfo('hardware-card', 'Device Memory (GB)', navigator.deviceMemory ? `${navigator.deviceMemory} (approx.)` : 'N/A');
+
+        // Advanced Info (Slower)
+        getFingerprints();
+        getFontList();
+
+        // User-activated
+        const mediaBtn = document.getElementById('media-button');
+        mediaBtn.addEventListener('click', async () => {
+            const statusEl = document.getElementById('media-status'), listEl = document.getElementById('media-list');
+            statusEl.textContent = 'Requesting...'; listEl.innerHTML = '';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+                statusEl.textContent = 'Devices Found:';
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                devices.filter(d => d.kind !== 'audiooutput').forEach(d => {
+                    listEl.innerHTML += `<div>[${d.kind.replace('input', '')}] ${d.label || `(no label)`}</div>`;
+                });
+                stream.getTracks().forEach(t => t.stop());
+            } catch (err) { statusEl.textContent = `Error: ${err.name}`; }
         });
+        
+        // Final Setup
+        setupCopyButton();
+    });
     </script>
-
 </body>
 </html>
